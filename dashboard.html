@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDGS Ground Control · 5G NTN Digital Twin</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+:root {
+  --bg: #03070f;
+  --panel: rgba(5,15,32,0.88);
+  --border: rgba(20,60,120,0.4);
+  --border-glow: rgba(0,180,255,0.55);
+  --cyan: #00d4ff;
+  --emerald: #00e5a0;
+  --amber: #ffbb00;
+  --rose: #ff3355;
+  --text: #b8d8f0;
+  --muted: #3a5a7a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;padding:10px;gap:9px;
+  background-image:
+    radial-gradient(ellipse at 15% 80%,rgba(0,60,140,0.07) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 15%,rgba(0,30,90,0.09) 0%,transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0z' fill='none'/%3E%3Cpath d='M0 0h1v1H0zM20 0h1v1h-1zM0 20h1v1H0zM20 20h1v1h-1z' fill='rgba(0,80,160,0.04)'/%3E%3C/svg%3E");
+}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;backdrop-filter:blur(20px);}
+
+/* ── PHASE 0: AUTH OVERLAY ── */
+#auth-overlay{
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(1,5,14,0.97);
+  backdrop-filter:blur(24px);
+  transition:opacity 0.8s ease;
+}
+#auth-card{
+  width:440px;
+  background:rgba(4,12,28,0.95);
+  border:1px solid rgba(0,150,220,0.35);
+  border-radius:16px;
+  padding:40px 44px;
+  box-shadow:0 0 60px rgba(0,100,200,0.12),0 0 120px rgba(0,60,140,0.08);
+  position:relative;overflow:hidden;
+}
+#auth-card::before{
+  content:'';position:absolute;top:-1px;left:20%;right:20%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,200,255,0.6),transparent);
+}
+.auth-title{
+  font-family:'Orbitron',monospace;font-size:13px;font-weight:900;
+  letter-spacing:4px;color:var(--cyan);margin-bottom:4px;
+  text-shadow:0 0 20px rgba(0,200,255,0.4);
+}
+.auth-sub{font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:32px;font-family:'JetBrains Mono',monospace;}
+.auth-label{font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:8px;font-family:'JetBrains Mono',monospace;}
+#auth-input{
+  width:100%;background:rgba(0,8,20,0.9);
+  border:1px solid rgba(0,120,200,0.4);border-radius:6px;
+  padding:12px 16px;font-family:'JetBrains Mono',monospace;
+  font-size:18px;font-weight:700;letter-spacing:6px;
+  color:var(--cyan);text-align:center;outline:none;
+  caret-color:var(--cyan);
+  transition:border-color 0.3s,box-shadow 0.3s;
+}
+#auth-input:focus{border-color:rgba(0,200,255,0.6);box-shadow:0 0 20px rgba(0,180,255,0.15);}
+#auth-input.shake{animation:shake 0.4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-8px);}40%,80%{transform:translateX(8px);}}
+#auth-error{font-size:11px;color:var(--rose);font-family:'JetBrains Mono',monospace;margin-top:8px;min-height:16px;text-align:center;}
+#auth-btn{
+  width:100%;margin-top:24px;padding:13px;
+  background:linear-gradient(135deg,rgba(0,120,220,0.3),rgba(0,80,160,0.4));
+  border:1px solid rgba(0,160,255,0.5);border-radius:8px;
+  color:var(--cyan);font-family:'Orbitron',monospace;font-size:12px;
+  font-weight:700;letter-spacing:3px;cursor:pointer;
+  transition:all 0.2s;
+}
+#auth-btn:hover{background:linear-gradient(135deg,rgba(0,150,255,0.35),rgba(0,100,200,0.45));box-shadow:0 0 25px rgba(0,160,255,0.2);}
+#auth-clearance{
+  margin-top:20px;text-align:center;
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  color:rgba(40,80,120,0.8);letter-spacing:2px;
+}
+
+/* ── PHASE 1: CELESTRAK CONNECTION ── */
+#connect-overlay{
+  position:fixed;inset:0;z-index:99;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(1,5,14,0.96);backdrop-filter:blur(20px);
+}
+#connect-card{
+  width:800px;
+  background:rgba(4,12,28,0.95);
+  border:1px solid rgba(0,200,100,0.3);
+  border-radius:16px;padding:50px 60px;
+  box-shadow:0 0 50px rgba(0,150,80,0.1);
+}
+#connect-log{
+  font-family:'JetBrains Mono',monospace;font-size:15px;
+  color:#00aa55;line-height:2.2;min-height:200px;
+}
+#connect-bar-wrap{margin-top:16px;height:3px;background:rgba(0,150,80,0.15);border-radius:2px;overflow:hidden;}
+#connect-bar{height:100%;background:linear-gradient(90deg,#00aa55,#00ff88);width:0%;transition:width 0.15s linear;box-shadow:0 0 8px rgba(0,255,136,0.5);}
+#connect-btn{
+  width:100%;margin-top:20px;padding:12px;
+  background:linear-gradient(135deg,rgba(0,180,80,0.25),rgba(0,120,60,0.35));
+  border:1px solid rgba(0,200,80,0.45);border-radius:8px;
+  color:#00dd77;font-family:'Orbitron',monospace;font-size:11px;
+  font-weight:700;letter-spacing:3px;cursor:pointer;transition:all 0.2s;
+}
+#connect-btn:hover{background:rgba(0,200,80,0.3);box-shadow:0 0 20px rgba(0,200,80,0.15);}
+#connect-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* ── PHASE 2: SCAN OVERLAY (over left panel) ── */
+#scan-overlay{
+  position:absolute;inset:0;z-index:20;
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;
+  background:rgba(1,5,14,0.65);border-radius:9px;
+  backdrop-filter:none;
+}
+.scan-rings{position:relative;width:90px;height:90px;}
+.ring{
+  position:absolute;border-radius:50%;
+  border:1px solid rgba(0,200,255,0.2);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  animation:ring-pulse 2s ease-in-out infinite;
+}
+.ring:nth-child(1){width:90px;height:90px;animation-delay:0s;}
+.ring:nth-child(2){width:65px;height:65px;animation-delay:0.4s;border-color:rgba(0,200,255,0.35);}
+.ring:nth-child(3){width:40px;height:40px;animation-delay:0.8s;border-color:rgba(0,200,255,0.6);}
+.ring-dot{
+  position:absolute;top:50%;left:50%;
+  width:8px;height:8px;background:var(--cyan);border-radius:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 12px var(--cyan);
+  animation:dot-blink 0.8s ease-in-out infinite;
+}
+@keyframes ring-pulse{0%,100%{opacity:0.3;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.05);}}
+@keyframes dot-blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+#scan-sat-name{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--cyan);letter-spacing:2px;text-align:center;
+  animation:name-flicker 0.25s ease-in-out infinite;
+}
+@keyframes name-flicker{0%,100%{opacity:1;}50%{opacity:0.6;}}
+#scan-prog-wrap{width:220px;height:3px;background:rgba(0,180,255,0.12);border-radius:2px;overflow:hidden;}
+#scan-prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),#0066ff);width:0%;transition:width 0.06s linear;box-shadow:0 0 8px rgba(0,200,255,0.5);}
+#scan-prog-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+#scan-phase-label{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--cyan);opacity:0.8;}
+
+/* ── TERMINAL ── */
+#terminal{
+  background:rgba(0,3,10,0.95);border:1px solid rgba(0,150,60,0.2);
+  border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:10.5px;
+  color:#00aa44;overflow-y:auto;padding:10px 12px;
+  flex:none;max-height:192px;
+  line-height:1.65;scrollbar-width:thin;scrollbar-color:rgba(0,150,60,0.3) transparent;
+}
+
+/* ── GLOBE ── */
+#globe-wrap{
+  flex:1;min-height:0;position:relative;overflow:hidden;
+  border-radius:8px;border:1px solid rgba(0,120,200,0.2);
+  background:#010810;
+}
+
+/* ── VISIBLE POOL PANEL (inside globe-wrap, top-left) ── */
+#pool-panel{
+  position:absolute;top:8px;left:8px;z-index:10;
+  width:200px;
+  background:rgba(2,10,22,0.88);
+  border:1px solid rgba(0,200,100,0.35);
+  border-radius:8px;
+  padding:8px 10px;
+  display:none;
+}
+#pool-title-zh{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#00e5a0;margin-bottom:1px;}
+#pool-title-en{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(0,200,130,0.55);letter-spacing:1px;}
+#pool-count-badge{
+  display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;
+  color:#00ff88;background:rgba(0,200,80,0.15);
+  border:1px solid rgba(0,200,80,0.3);border-radius:10px;
+  padding:1px 7px;margin-top:4px;margin-bottom:6px;
+}
+#btn-next-pool{
+  width:100%;padding:6px 0;margin-bottom:7px;
+  background:linear-gradient(135deg,rgba(0,140,220,0.2),rgba(0,80,200,0.25));
+  border:1px solid rgba(0,170,255,0.42);border-radius:5px;
+  color:var(--cyan);font-family:'Inter',sans-serif;font-size:11px;
+  font-weight:600;cursor:pointer;transition:all 0.15s;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+}
+#btn-next-pool:hover{background:rgba(0,180,255,0.2);box-shadow:0 0 12px rgba(0,200,255,0.15);}
+#btn-next-pool:disabled{opacity:0.3;cursor:not-allowed;}
+#pool-list{display:flex;flex-direction:column;gap:2px;}
+.pool-entry{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:4px 7px;border-radius:4px;cursor:pointer;
+  border:1px solid transparent;
+  transition:all 0.12s;
+}
+.pool-entry:hover{background:rgba(0,200,100,0.12);border-color:rgba(0,200,100,0.3);}
+.pool-entry.active{background:rgba(0,220,255,0.1);border-color:rgba(0,220,255,0.45);}
+.pool-entry-name{font-family:'JetBrains Mono',monospace;font-size:9px;color:#88bbdd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
+.pool-entry.active .pool-entry-name{color:#00e8ff;}
+.pool-entry-alt{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:#00cc66;white-space:nowrap;}
+.pool-entry.active .pool-entry-alt{color:#00e8ff;}
+#pool-refreshing{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);text-align:center;padding:4px 0;}
+#pool-separator{height:1px;background:rgba(0,160,80,0.2);margin:5px 0 6px;}
+#globe-canvas{display:block;width:100%;height:100%;}
+#globe-info{
+  position:absolute;bottom:5px;left:8px;right:8px;
+  display:flex;justify-content:space-between;align-items:flex-end;
+  pointer-events:none;
+}
+.globe-label{
+  font-family:'Inter',sans-serif;font-size:9px;
+  color:rgba(0,150,200,0.65);letter-spacing:0.5px;
+}
+#globe-sat-tag{
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  color:rgba(0,220,255,0.7);text-align:right;letter-spacing:0.5px;
+}
+#terminal::-webkit-scrollbar{width:3px;}
+#terminal::-webkit-scrollbar-thumb{background:rgba(0,150,60,0.3);border-radius:2px;}
+.t-dim{color:#0e4a24;}.t-hi{color:#00ff88;font-weight:700;}
+.t-cyan{color:#00aacc;}.t-warn{color:#cc8800;}.t-err{color:#cc2244;}
+.t-muted{color:#1a4a2a;}
+
+/* ── PROG BAR ── */
+#scan-bar-wrap{height:2px;background:rgba(0,150,60,0.15);border-radius:1px;overflow:hidden;}
+#scan-bar-fill{height:100%;background:linear-gradient(90deg,#00aa44,#00ff88);width:0%;transition:width 0.25s ease;box-shadow:0 0 6px rgba(0,255,136,0.5);}
+
+/* ── MAIN PANELS ── */
+.kpi-card{
+  background:rgba(4,12,28,0.75);border:1px solid var(--border);
+  border-radius:8px;padding:6px 10px;
+}
+.kpi-val{font-family:'JetBrains Mono',monospace;font-weight:700;}
+
+/* locked panel */
+#locked-panel{display:none;}
+#locked-name{
+  font-family:'Orbitron',monospace;font-size:17px;font-weight:700;
+  color:var(--cyan);text-shadow:0 0 18px rgba(0,200,255,0.45);letter-spacing:2px;
+}
+
+/* status */
+#status-card{border-left:4px solid var(--emerald);transition:border-color 0.4s,background 0.4s;}
+
+/* buttons */
+.btn-ai{background:linear-gradient(135deg,rgba(0,220,140,0.18),rgba(0,160,90,0.28));border:1px solid rgba(0,220,140,0.45);color:#00ff99;box-shadow:0 0 14px rgba(0,200,120,0.2);}
+.btn-ai-off{background:rgba(30,40,60,0.5);border:1px solid rgba(60,80,110,0.4);color:#4a6a8a;}
+.btn-handover{background:linear-gradient(135deg,rgba(255,30,50,0.18),rgba(180,15,35,0.28));border:1px solid rgba(255,50,70,0.45);color:#ff6677;}
+.btn-handover:hover{background:rgba(255,50,70,0.25);}
+.btn-next{background:linear-gradient(135deg,rgba(0,140,220,0.18),rgba(60,80,220,0.18));border:1px solid rgba(0,170,255,0.38);color:var(--cyan);font-family:'JetBrains Mono',monospace;font-size:11px;}
+.btn-next:hover{border-color:rgba(0,220,255,0.65);background:rgba(0,170,255,0.14);}
+.btn-next:disabled{opacity:0.35;cursor:not-allowed;}
+.badge-ce{background:rgba(0,200,90,0.1);border:1px solid rgba(0,200,90,0.35);color:#00cc66;font-family:'JetBrains Mono',monospace;}
+.badge-sim{background:rgba(255,170,0,0.1);border:1px solid rgba(255,170,0,0.3);color:#ffaa00;font-family:'JetBrains Mono',monospace;}
+
+/* chart dim until active */
+#charts-dim{pointer-events:none;opacity:0;transition:opacity 1.2s ease;}
+#charts-dim.active{opacity:1;}
+
+@keyframes pulse-danger{0%,100%{color:#ff3355;text-shadow:0 0 10px rgba(255,50,80,0.8);}50%{opacity:0.6;}}
+.blink-danger{animation:pulse-danger 1s ease-in-out infinite;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ AUTH OVERLAY ══════════════════ -->
+<div id="auth-overlay">
+  <div id="auth-card">
+    <div style="display:flex; justify-content:center; margin-bottom:15px;">
+      <img src="https://pub-c98d5902eedf42f6a9765dfad981fd88.r2.dev/Icon/2023.10.24--ogcloudlogo-CMYK-TM.png" alt="Ogcloud" style="height:32px;">
+    </div>
+    <div class="auth-title" style="font-family:'Inter',sans-serif;font-size:16px;">SDGS 边缘智能数字孪生控制台</div>
+    <div class="auth-sub" style="margin-bottom:2px;">SDGS GROUND CONTROL</div>
+    <div class="auth-sub">5G NTN HARDWARE-IN-THE-LOOP SYSTEM</div>
+    <div class="auth-label" style="font-family:'Inter',sans-serif;font-size:11px;">操作员安全代码 / OPERATOR SECURITY CODE</div>
+    <input id="auth-input" type="password" maxlength="10" placeholder="· · · · · ·"
+      autocomplete="off" onkeydown="if(event.key==='Enter')authSubmit()">
+    <div id="auth-error"></div>
+    <button id="auth-btn" onclick="authSubmit()">身份验证 / AUTHENTICATE</button>
+    <div id="auth-clearance">安全级别: ALPHA-5 · CLEARANCE LEVEL: ALPHA-5 · OGCLOUD LIMITED</div>
+  </div>
+</div>
+
+<!-- ══════════════════ CONNECT OVERLAY ══════════════════ -->
+<div id="connect-overlay">
+  <div id="connect-card">
+    <div style="display:flex; justify-content:center; margin-bottom:30px;">
+      <img src="https://pub-c98d5902eedf42f6a9765dfad981fd88.r2.dev/Icon/2023.10.24--ogcloudlogo-CMYK-TM.png" alt="Ogcloud" style="height:48px;">
+    </div>
+    <div class="flex flex-col items-center mb-6">
+      <div style="font-family:'Inter',sans-serif;font-size:24px;font-weight:600;letter-spacing:1px;color:#00dd77;margin-bottom:6px;">
+        CELESTRAK 实时数据接口
+      </div>
+      <div style="font-family:'Orbitron',monospace;font-size:14px;letter-spacing:3px;color:rgba(0,221,119,0.7);">
+        CELESTRAK DATA INTERFACE
+      </div>
+    </div>
+    <div id="connect-log"></div>
+    <div id="connect-bar-wrap" style="height:5px; margin-top:20px; background:rgba(0,150,80,0.2);"><div id="connect-bar"></div></div>
+    <button id="connect-btn" onclick="startConnect()" style="font-family:'Inter',sans-serif; font-size:16px; padding:16px; margin-top:25px;">▶ 连接到 CELESTRAK 数据库接口 / CONNECT</button>
+    
+    <div style="margin-top:40px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+      <div style="font-family:'Orbitron',monospace;font-size:14px;color:rgba(0,221,119,0.5);letter-spacing:3px;">POWERED BY</div>
+      <div style="background:white; padding:15px 0; border-radius:8px; width:100%; display:flex; justify-content:center;">
+        <img src="https://pub-c98d5902eedf42f6a9765dfad981fd88.r2.dev/Icon/celestrak-logo-1600x550.png" alt="Celestrak" style="height:60px;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ HEADER ══════════════════ -->
+<header class="panel flex items-center justify-between px-5 py-2.5 shrink-0" style="opacity:0;transition:opacity 0.8s;" id="main-header">
+  <div class="flex items-center gap-4">
+    <img src="https://pub-c98d5902eedf42f6a9765dfad981fd88.r2.dev/Icon/2023.10.24--ogcloudlogo-CMYK-TM.png" alt="Ogcloud" style="height:28px;">
+    <div>
+      <div style="display:flex; align-items:baseline; gap:10px;">
+        <div style="font-family:'Inter',sans-serif;font-size:18px;font-weight:900;background:linear-gradient(90deg,#00d4ff,#00ff99);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;">
+          SDGS 边缘智能数字孪生
+        </div>
+        <div style="font-family:'Orbitron',monospace;font-size:11px;font-weight:900;color:rgba(0,212,255,0.7);letter-spacing:1px;">
+          EDGE-INTELLIGENCE DIGITAL TWIN
+        </div>
+      </div>
+      <p style="color:var(--muted);font-size:10px;margin-top:2px;font-family:'JetBrains Mono',monospace;">
+        5G NTN · HARDWARE-IN-THE-LOOP · GROUND STATION CONTROLLER · by Longji He
+      </p>
+    </div>
+  </div>
+  <div class="flex gap-3 items-center">
+    <button id="btn-ai" onclick="toggleAI()" class="btn-ai px-4 py-2 rounded text-sm transition-all font-semibold" style="width:196px;">Edge-AI PID: 开启</button>
+    <button onclick="toggleHandover()" class="btn-handover px-4 py-2 rounded text-sm transition-all font-semibold" style="width:156px;">⚡ 强制越区切换</button>
+  </div>
+</header>
+
+<!-- ══════════════════ MAIN BODY ══════════════════ -->
+<div class="flex gap-3 flex-1 min-h-0" style="opacity:0;transition:opacity 0.8s;" id="main-body">
+
+  <!-- ─── LEFT: TRACKING PANEL ─── -->
+  <div class="panel" style="width:42%;display:flex;flex-direction:column;position:relative;border-color:rgba(0,180,255,0.3);box-shadow:0 0 20px rgba(0,120,200,0.06);">
+
+    <!-- Scan overlay (phase 2b) -->
+    <div id="scan-overlay">
+      <div style="text-align:center;">
+        <div style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;color:var(--cyan);margin-bottom:2px;" id="scan-phase-label-zh">正在扫描轨道数据库</div>
+        <div style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:rgba(0,212,255,0.7);" id="scan-phase-label">SCANNING ORBITAL DATABASE</div>
+      </div>
+      <div class="scan-rings">
+        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+        <div class="ring-dot"></div>
+      </div>
+      <div id="scan-sat-name">INITIALIZING...</div>
+      <div id="scan-prog-wrap"><div id="scan-prog-fill"></div></div>
+      <div id="scan-prog-label">0 / 0</div>
+    </div>
+
+    <!-- Panel header -->
+    <div class="flex items-center justify-between px-4 py-2 shrink-0" style="border-bottom:1px solid var(--border);">
+      <div class="flex items-center gap-2">
+        <span style="font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--text);">轨道跟踪</span>
+        <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1px;color:var(--cyan);opacity:0.8;">ORBITAL TRACKING</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div id="source-badge" class="badge-sim text-xs px-2.5 py-0.5 rounded-full font-bold">OFFLINE</div>
+      </div>
+    </div>
+
+    <!-- Locked target -->
+    <div id="locked-panel" class="px-4 pt-2.5 pb-2 shrink-0" style="border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:stretch;gap:0;">
+
+        <!-- 左列：跟踪目标信息 -->
+        <div style="flex:0 0 auto;">
+          <div style="margin-bottom:3px; display:flex; align-items:baseline; gap:6px;">
+            <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--text);">跟踪目标</span>
+            <span style="font-size:8px;color:var(--muted);letter-spacing:1px;font-family:'JetBrains Mono',monospace;">TRACKING TARGET</span>
+          </div>
+          <div id="locked-name">—</div>
+          <div class="flex gap-3 mt-1">
+            <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">EPOCH: <span id="locked-epoch" style="color:#336688;">—</span></span>
+            <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">IDX: <span id="locked-index" style="color:#336688;">—</span>/<span id="locked-total" style="color:var(--muted);">—</span></span>
+          </div>
+        </div>
+
+        <!-- 竖线 + 中间：链路预热状态（PRE_WARM badge） -->
+        <div id="handover-panel" style="display:none;flex:1;margin-left:14px;padding-left:14px;border-left:1px solid var(--border);margin-right:14px;padding-right:14px;border-right:1px solid var(--border);align-self:stretch;justify-content:center;flex-direction:column;">
+          <!-- phase badge row -->
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;">
+            <span id="handover-phase-badge" style="font-size:9px;font-weight:700;letter-spacing:1.5px;padding:2px 8px;border-radius:3px;background:#f59e0b22;color:#f59e0b;font-family:'JetBrains Mono',monospace;">PRE_WARN</span>
+            <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);">越区切换候选星</span>
+            <span style="font-size:8px;color:var(--muted);letter-spacing:1px;font-family:'JetBrains Mono',monospace;">LINK PRE-WARMING</span>
+          </div>
+          <!-- standby sat name -->
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+            <span id="handover-sat-name" style="font-size:13px;font-weight:700;color:#f59e0b;font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;">—</span>
+          </div>
+          <!-- standby metrics -->
+          <div style="display:flex;gap:12px;">
+            <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">ELV <span id="handover-sat-alt" style="color:#fbbf24;font-weight:600;">—</span>°</span>
+            <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">RTT <span id="handover-sat-delay" style="color:#fbbf24;font-weight:600;">—</span> ms</span>
+            <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">LOSS <span id="handover-sat-loss" style="color:#fbbf24;font-weight:600;">—</span>%</span>
+          </div>
+        </div>
+
+        <!-- 右列：仰角 / 距离（始终靠右） -->
+        <div style="margin-left:auto;text-align:right;flex:0 0 auto;">
+          <div style="margin-bottom:2px; display:flex; align-items:baseline; justify-content:flex-end; gap:6px;">
+            <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--text);">仰角 / 距离</span>
+            <span style="font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;">ELEVATION / RANGE</span>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--cyan);">
+            <span id="val-ele">--</span>° <span style="color:var(--muted);font-size:11px;">/ </span><span id="val-dist" style="font-size:13px;color:#5599bb;">--</span><span style="font-size:9px;color:var(--muted);">km</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Terminal + Globe -->
+    <div class="px-3 pt-2 pb-2 flex flex-col flex-1 min-h-0 gap-1.5">
+      <div id="terminal"></div>
+      <div id="scan-bar-wrap" class="shrink-0"><div id="scan-bar-fill"></div></div>
+      <div id="status-line" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-align:right;" class="shrink-0">系统离线 / SYSTEM OFFLINE</div>
+      <!-- Orbital Globe -->
+      <div id="globe-wrap">
+        <canvas id="globe-canvas"></canvas>
+
+        <!-- ── Visible Pool Panel (top-left overlay inside globe) ── -->
+        <div id="pool-panel">
+          <div id="pool-title-zh">当前过境可见卫星池</div>
+          <div id="pool-title-en">IN-PASS VISIBLE SATELLITE POOL</div>
+          <div id="pool-count-badge">正在计算… / COMPUTING</div>
+          <div id="pool-separator"></div>
+          <button id="btn-next-pool" onclick="requestNextSat()" disabled>
+            切换下一颗 · NEXT SAT
+          </button>
+          <div id="pool-list">
+            <div id="pool-refreshing">扫描完成后自动更新 / UPDATING...</div>
+          </div>
+        </div>
+
+        <div id="globe-info">
+          <span class="globe-label">◎ 卫星轨道 (正射投影) · ORBITAL TRACK · 深圳 GS</span>
+          <span id="globe-sat-tag">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── RIGHT: KPIs + Status + Charts ─── -->
+  <div class="flex flex-col gap-3 flex-1 min-h-0">
+
+    <!-- KPI row -->
+    <div class="flex gap-2 shrink-0 items-stretch">
+      <!-- 物理层多普勒补偿算法核心参数 -->
+      <div class="panel shrink-0" style="padding:4px 8px; border-top: 2px solid var(--cyan); background: linear-gradient(180deg, rgba(0, 180, 255, 0.06) 0%, rgba(0,0,0,0) 100%);">
+        <div style="text-align:center; margin-bottom:5px; padding-bottom:3px; border-bottom: 1px solid rgba(0, 180, 255, 0.15);">
+          <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:0.5px;">📡 边缘智能多普勒补偿</div>
+          <div style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;margin-top:1px;">EDGE-AI DOPPLER COMPENSATION</div>
+        </div>
+        <div class="flex gap-2">
+          <div class="kpi-card text-center" style="border-color: rgba(0, 200, 255, 0.15); background: rgba(2, 6, 14, 0.8);">
+            <div style="margin-bottom:3px; display:flex; flex-direction:column; align-items:center;">
+              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">⏱ 残余定时提前</span>
+              <span style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;">RESIDUAL TA</span>
+            </div>
+            <div class="kpi-val text-xl" style="color:#ffcc44;"><span id="val-ta">--</span><span style="font-size:10px;font-weight:400;"> µs</span></div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;">LIMIT 2.34µs</div>
+          </div>
+          <div class="kpi-card text-center" style="border-color: rgba(0, 200, 255, 0.15); background: rgba(2, 6, 14, 0.8);">
+            <div style="margin-bottom:3px; display:flex; flex-direction:column; align-items:center;">
+              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">🌊 残余频偏</span>
+              <span style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;">RESIDUAL CFO</span>
+            </div>
+            <div class="kpi-val text-xl" style="color:#44ddff;"><span id="val-cfo">--</span><span style="font-size:10px;font-weight:400;"> Hz</span></div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;">LIMIT 90Hz</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 网络参数 -->
+      <div class="panel flex-1" style="padding:4px 8px; border-top: 2px solid var(--emerald); background: linear-gradient(180deg, rgba(0, 200, 100, 0.04) 0%, rgba(0,0,0,0) 100%);">
+        <div style="text-align:center; margin-bottom:5px; padding-bottom:3px; border-bottom: 1px solid rgba(0, 200, 100, 0.15);">
+          <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:var(--emerald);letter-spacing:0.5px;">🌐 端到端网络传输性能</div>
+          <div style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;margin-top:1px;">END-TO-END NETWORK PERFORMANCE</div>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+          <div class="kpi-card text-center" style="border-color: rgba(0, 200, 100, 0.15); background: rgba(2, 6, 14, 0.8);">
+            <div style="margin-bottom:3px; display:flex; flex-direction:column; align-items:center;">
+              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">🚀 吞吐量</span>
+              <span style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;">THROUGHPUT</span>
+            </div>
+            <div class="kpi-val text-xl" style="color:var(--emerald);"><span id="val-tput">--</span><span style="font-size:10px;font-weight:400;"> Mbps</span></div>
+            <div id="tput-sub-label" style="font-size:7px;color:var(--muted);margin-top:2px;">TCP BBR</div>
+          </div>
+          <div class="kpi-card text-center" style="border-color: rgba(0, 200, 100, 0.15); background: rgba(2, 6, 14, 0.8);">
+            <div style="margin-bottom:3px; display:flex; flex-direction:column; align-items:center;">
+              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">传播延迟</span>
+              <span style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;">PROP DELAY</span>
+            </div>
+            <div class="kpi-val text-xl" style="color:#8899ff;"><span id="val-delay">--</span><span style="font-size:10px;font-weight:400;"> ms</span></div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;" id="delay-label-sub">ONE-WAY · SIM</div>
+          </div>
+          <div class="kpi-card text-center" style="border-color: rgba(0, 200, 100, 0.15); background: rgba(2, 6, 14, 0.8);">
+            <div style="margin-bottom:3px; display:flex; flex-direction:column; align-items:center;">
+              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">链路抖动</span>
+              <span style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;">JITTER</span>
+            </div>
+            <div class="kpi-val text-xl" style="color:#fb923c;"><span id="val-jitter">--</span><span style="font-size:10px;font-weight:400;"> ms</span></div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;">mdev · RTT VARIANCE</div>
+          </div>
+          <div class="kpi-card text-center" style="position:relative; border-color: rgba(0, 200, 100, 0.15); background: rgba(2, 6, 14, 0.8);">
+            <!-- Real/Sim toggle button -->
+            <button id="btn-measure-toggle" onclick="toggleMeasureMode()"
+              title="切换真实Pi测量 / 模拟数据"
+              style="position:absolute;top:5px;right:5px;width:16px;height:16px;
+                     border-radius:50%;border:1px solid rgba(0,200,100,0.4);
+                     background:rgba(0,30,15,0.7);cursor:pointer;
+                     display:flex;align-items:center;justify-content:center;
+                     transition:all 0.2s;padding:0;">
+              <span id="measure-mode-dot" style="width:6px;height:6px;border-radius:50%;
+                    background:#3a5a4a;display:block;transition:background 0.2s;"></span>
+            </button>
+            <div style="margin-bottom:3px; display:flex; flex-direction:column; align-items:center;">
+              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">⚠ 丢包率</span>
+              <span id="loss-mode-label" style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;">PKT LOSS · SIM</span>
+            </div>
+            <div class="kpi-val text-xl" style="color:var(--rose);"><span id="val-loss">--</span><span style="font-size:10px;font-weight:400;"> %</span></div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;" id="delay-sub-label">ONE-WAY SIM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status card -->
+    <div id="status-card" class="panel px-4 py-2.5 shrink-0">
+      <div style="margin-bottom:3px; display:flex; align-items:baseline; gap:6px;">
+        <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--text);">网络诊断状态</span>
+        <span style="font-size:8px;color:var(--muted);letter-spacing:1px;font-family:'JetBrains Mono',monospace;">NETWORK DIAGNOSTIC STATUS</span>
+      </div>
+      <div id="val-status" style="font-size:17px;font-weight:700;color:var(--emerald);">SYSTEM OFFLINE — PENDING INITIALIZATION</div>
+    </div>
+
+    <!-- Charts -->
+    <div id="charts-dim" class="grid grid-cols-2 gap-3 flex-1 min-h-0">
+      <div class="panel p-3 flex flex-col">
+        <div class="flex justify-between items-center shrink-0 mb-1">
+          <div style="display:flex; align-items:baseline; gap:6px;">
+            <span style="font-size:12px;color:var(--emerald);font-weight:600;font-family:'Inter',sans-serif;">🚀 实时吞吐量</span>
+            <span style="font-size:9px;color:rgba(0,229,160,0.6);font-weight:400;font-family:'JetBrains Mono',monospace;">Throughput (TCP BBR)</span>
+          </div>
+        </div>
+        <div id="chart-throughput" class="flex-1 min-h-0"></div>
+      </div>
+      <div class="panel p-3 flex flex-col">
+        <div class="shrink-0 mb-1">
+          <div style="display:flex; align-items:baseline; gap:6px;">
+            <span style="font-size:12px;color:#8899ff;font-weight:600;font-family:'Inter',sans-serif;">延迟 / 抖动 / 丢包</span>
+            <span style="font-size:9px;color:rgba(136,153,255,0.6);font-weight:400;font-family:'JetBrains Mono',monospace;">Delay &amp; Jitter &amp; Packet Loss</span>
+          </div>
+        </div>
+        <div id="chart-delay-loss" class="flex-1 min-h-0"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════ CONFIG ════════════════
+const ACCESS_CODE = 'SDGS2026';  // change as needed
+
+// ════════════════ STATE ════════════════
+let chartsActive = false;
+let systemOnline = false;
+let scanComplete = false;
+let isAcquiring  = false;
+let wsConnected  = false;
+let pendingData  = null;  // buffer latest telemetry until charts active
+
+// ════════════════ CHARTS ════════════════
+const chartTput = echarts.init(document.getElementById('chart-throughput'),'dark',{backgroundColor:'transparent'});
+const chartDL   = echarts.init(document.getElementById('chart-delay-loss'),'dark',{backgroundColor:'transparent'});
+const MAX_PTS=60; let tData=[],tput=[],dlay=[],jitt=[],loss_=[];
+const baseOpt={tooltip:{trigger:'axis'},grid:{left:'4%',right:'4%',bottom:'4%',top:'8%',containLabel:true},
+  xAxis:{type:'category',boundaryGap:false,data:tData,splitLine:{show:false},axisLabel:{fontSize:8}},animation:false};
+chartTput.setOption({...baseOpt,yAxis:{type:'value',min:0,max:250,axisLabel:{fontSize:8}},
+  series:[{type:'line',smooth:true,symbol:'none',data:tput,
+    itemStyle:{color:'#00e5a0'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(0,229,160,0.35)'},{offset:1,color:'rgba(0,229,160,0)'}])},lineStyle:{width:2}}]});
+chartDL.setOption({...baseOpt,
+  legend:{data:['延迟 ms','抖动 ms','丢包 %'],textStyle:{fontSize:9,color:'#aaa'},top:2,right:4,itemWidth:12,itemHeight:6},
+  yAxis:[
+    {type:'value',name:'ms',nameTextStyle:{fontSize:8,color:'#888'},axisLabel:{fontSize:8},splitLine:{lineStyle:{color:'rgba(255,255,255,0.06)'}}},
+    {type:'value',name:'%',nameTextStyle:{fontSize:8,color:'#888'},max:25,axisLabel:{fontSize:8},splitLine:{show:false}}
+  ],
+  series:[
+    {name:'延迟 ms', type:'line',smooth:true,yAxisIndex:0,data:dlay,itemStyle:{color:'#6699ff'},symbol:'none',lineStyle:{width:2}},
+    {name:'抖动 ms', type:'line',smooth:true,yAxisIndex:0,data:jitt,itemStyle:{color:'#fb923c'},symbol:'none',lineStyle:{width:1.5,type:'dashed'},areaStyle:{color:'rgba(251,146,60,0.08)'}},
+    {name:'丢包 %',  type:'line',step:'end', yAxisIndex:1,data:loss_,itemStyle:{color:'#ff3355'},areaStyle:{color:'rgba(255,51,85,0.18)'},symbol:'none',lineStyle:{width:2}}
+  ]});
+
+// ════════════════ GLOBE ════════════════
+const GS_LAT_G = 22.54, GS_LON_G = 114.05;  // 深圳地面站 Shenzhen GS
+const EARTH_R_KM = 6371, LEO_ALT_KM = 550;
+let globeSatLat = 37.0, globeSatLon = -95.0;
+let globeSatName = '—';
+let globePulsePhase = 0;
+let globeStars = null;
+let globeAnimRunning = false;
+
+// Simplified continent outlines [lat, lon]
+const CONTINENTS = [
+  // North America
+  [[71,-141],[64,-166],[56,-160],[53,-133],[47,-124],[33,-117],[22,-106],
+   [22,-88],[25,-82],[30,-81],[38,-75],[44,-66],[50,-55],[58,-68],[65,-64],
+   [72,-80],[78,-92],[82,-92],[82,-134],[71,-141]],
+  // Greenland
+  [[83,-45],[76,-18],[64,-18],[60,-43],[62,-50],[64,-52],[70,-54],[76,-68],[83,-45]],
+  // South America
+  [[12,-72],[8,-60],[4,-52],[-4,-50],[-8,-34],[-20,-41],[-34,-53],
+   [-44,-65],[-56,-68],[-42,-63],[-34,-58],[-20,-45],[-8,-35],[0,-50],[8,-60],[12,-72]],
+  // Europe
+  [[71,28],[68,14],[60,5],[54,8],[52,4],[47,2],[44,10],[38,15],[36,14],[36,28],
+   [42,28],[46,30],[48,38],[56,38],[60,28],[64,28],[71,28]],
+  // Africa
+  [[37,-5],[37,10],[32,32],[22,37],[12,43],[0,42],[-12,40],[-26,33],
+   [-34,26],[-34,18],[-24,15],[-4,9],[0,-2],[4,-9],[14,-17],[26,-15],[32,-2],[37,-5]],
+  // UK + Iceland (small blobs)
+  [[58,-5],[51,-5],[51,2],[54,0],[58,-5]],
+  [[64,-24],[66,-13],[65,-18],[63,-22],[64,-24]],
+];
+
+function projectOrtho(lat, lon, phi0, lam0, cx, cy, R) {
+  const phi = lat * Math.PI/180, lam = lon * Math.PI/180;
+  const cosPhi = Math.cos(phi), sinPhi = Math.sin(phi);
+  const cosPhi0 = Math.cos(phi0), sinPhi0 = Math.sin(phi0);
+  const dLam = lam - lam0;
+  const x = cosPhi * Math.sin(dLam);
+  const y = cosPhi0 * sinPhi - sinPhi0 * cosPhi * Math.cos(dLam);
+  const z = sinPhi0 * sinPhi + cosPhi0 * cosPhi * Math.cos(dLam);
+  return { x: cx + R*x, y: cy - R*y, z };
+}
+
+function drawGlobe() {
+  const canvas = document.getElementById('globe-canvas');
+  if (!canvas) return;
+  const wrap = document.getElementById('globe-wrap');
+  if (!wrap) return;
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+  if (W < 20 || H < 20) return;
+  canvas.width = W; canvas.height = H;
+
+  const ctx = canvas.getContext('2d');
+  const cx = W/2, cy = H/2;
+  const R = Math.min(W, H)/2 - 12;
+
+  // Background
+  ctx.fillStyle = '#010810';
+  ctx.fillRect(0, 0, W, H);
+
+  // Stars (generated once, reused)
+  if (!globeStars || globeStars.w !== W) {
+    globeStars = { w: W, pts: [] };
+    for (let i = 0; i < 90; i++) {
+      globeStars.pts.push([Math.random()*W, Math.random()*H, 0.3+Math.random()*1.1, Math.random()]);
+    }
+  }
+  for (const [sx, sy, sr] of globeStars.pts) {
+    ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(180,210,255,0.45)`; ctx.fill();
+  }
+
+  // Atmosphere outer glow
+  const atmO = ctx.createRadialGradient(cx, cy, R*0.9, cx, cy, R*1.18);
+  atmO.addColorStop(0, 'rgba(0,90,200,0.0)');
+  atmO.addColorStop(0.55, 'rgba(20,100,220,0.14)');
+  atmO.addColorStop(1, 'rgba(0,40,140,0.0)');
+  ctx.beginPath(); ctx.arc(cx, cy, R*1.18, 0, Math.PI*2);
+  ctx.fillStyle = atmO; ctx.fill();
+
+  // Earth fill
+  const earthG = ctx.createRadialGradient(cx - R*0.25, cy - R*0.28, R*0.06, cx, cy, R);
+  earthG.addColorStop(0, '#0e3858');
+  earthG.addColorStop(0.45, '#061b32');
+  earthG.addColorStop(1, '#010a16');
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2);
+  ctx.fillStyle = earthG; ctx.fill();
+
+  // Clip content to sphere
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.clip();
+
+  const phi0 = GS_LAT_G * Math.PI/180;
+  const lam0 = GS_LON_G * Math.PI/180;
+
+  // Latitude/longitude grid
+  ctx.strokeStyle = 'rgba(0,70,140,0.22)'; ctx.lineWidth = 0.5;
+  for (let lat = -80; lat <= 80; lat += 20) {
+    ctx.beginPath(); let mv = true;
+    for (let lon = -180; lon <= 180; lon += 3) {
+      const p = projectOrtho(lat, lon, phi0, lam0, cx, cy, R);
+      if (p.z > 0) { mv ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); mv = false; }
+      else mv = true;
+    }
+    ctx.stroke();
+  }
+  for (let lon = -180; lon < 180; lon += 20) {
+    ctx.beginPath(); let mv = true;
+    for (let lat = -89; lat <= 89; lat += 3) {
+      const p = projectOrtho(lat, lon, phi0, lam0, cx, cy, R);
+      if (p.z > 0) { mv ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); mv = false; }
+      else mv = true;
+    }
+    ctx.stroke();
+  }
+  // Equator highlight
+  ctx.strokeStyle = 'rgba(0,120,180,0.3)'; ctx.lineWidth = 0.8;
+  ctx.beginPath(); let mve = true;
+  for (let lon = -180; lon <= 180; lon += 2) {
+    const p = projectOrtho(0, lon, phi0, lam0, cx, cy, R);
+    if (p.z > 0) { mve ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); mve = false; }
+    else mve = true;
+  }
+  ctx.stroke();
+
+  // Continents
+  for (const poly of CONTINENTS) {
+    ctx.beginPath(); let inPath = false;
+    for (let i = 0; i < poly.length; i++) {
+      const [lt, ln] = poly[i];
+      const p = projectOrtho(lt, ln, phi0, lam0, cx, cy, R);
+      if (p.z > -0.08) {
+        inPath ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+        inPath = true;
+      } else inPath = false;
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(0,90,50,0.28)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(0,160,80,0.22)'; ctx.lineWidth = 0.7; ctx.stroke();
+  }
+
+  // Sub-satellite ground-track marker
+  const gndPt = projectOrtho(globeSatLat, globeSatLon, phi0, lam0, cx, cy, R);
+  // Satellite elevated position (scales with LEO altitude)
+  const elevFactor = 1 + LEO_ALT_KM / EARTH_R_KM;
+  const ddx = gndPt.x - cx, ddy = gndPt.y - cy;
+  const dlen = Math.sqrt(ddx*ddx + ddy*ddy) || 1;
+  const elevPx = R * (LEO_ALT_KM / EARTH_R_KM);
+  const satSX = gndPt.x + (ddx/dlen) * elevPx;
+  const satSY = gndPt.y + (ddy/dlen) * elevPx;
+
+  // GS position
+  const gsPt = projectOrtho(GS_LAT_G, GS_LON_G, phi0, lam0, cx, cy, R);
+
+  // Line of sight: GS → satellite
+  if (gsPt.z > 0 && gndPt.z > 0) {
+    ctx.beginPath(); ctx.moveTo(gsPt.x, gsPt.y); ctx.lineTo(satSX, satSY);
+    ctx.strokeStyle = 'rgba(0,200,255,0.18)'; ctx.lineWidth = 0.8;
+    ctx.setLineDash([3,4]); ctx.stroke(); ctx.setLineDash([]);
+    // Vertical drop from satellite to ground track
+    ctx.beginPath(); ctx.moveTo(satSX, satSY); ctx.lineTo(gndPt.x, gndPt.y);
+    ctx.strokeStyle = 'rgba(0,180,255,0.12)'; ctx.lineWidth = 0.7;
+    ctx.setLineDash([2,3]); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  ctx.restore(); // end sphere clip
+
+  // Atmosphere inner limb glow
+  const limb = ctx.createRadialGradient(cx, cy, R*0.86, cx, cy, R*1.03);
+  limb.addColorStop(0, 'rgba(0,100,220,0.0)');
+  limb.addColorStop(0.65, 'rgba(10,130,255,0.22)');
+  limb.addColorStop(1, 'rgba(0,60,180,0.0)');
+  ctx.beginPath(); ctx.arc(cx, cy, R*1.03, 0, Math.PI*2);
+  ctx.fillStyle = limb; ctx.fill();
+
+  // Globe border
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(0,150,255,0.45)'; ctx.lineWidth = 1.2; ctx.stroke();
+
+  // Draw markers AFTER restore (so they're on top of limb)
+  // GS marker (triangle)
+  if (gsPt.z > 0) {
+    ctx.save();
+    ctx.shadowColor = '#ffcc00'; ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.moveTo(gsPt.x, gsPt.y - 8);
+    ctx.lineTo(gsPt.x - 5, gsPt.y + 3);
+    ctx.lineTo(gsPt.x + 5, gsPt.y + 3);
+    ctx.closePath();
+    ctx.fillStyle = '#ffcc00'; ctx.fill();
+    ctx.restore();
+    // GS label
+    ctx.fillStyle = 'rgba(255,200,0,0.65)'; ctx.font = '7px JetBrains Mono';
+    ctx.fillText('GS', gsPt.x + 7, gsPt.y + 1);
+  }
+
+  // Ground track dot
+  if (gndPt.z > -0.1) {
+    ctx.beginPath(); ctx.arc(gndPt.x, gndPt.y, 2.5, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,200,255,0.35)'; ctx.fill();
+  }
+
+  // Satellite dot with pulse rings
+  if (gndPt.z > -0.1) {
+    globePulsePhase = (globePulsePhase + 0.06) % (Math.PI*2);
+    const pulse = Math.abs(Math.sin(globePulsePhase));
+    // Outer pulse ring
+    ctx.beginPath(); ctx.arc(satSX, satSY, 9 + 4*pulse, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(0,220,255,${0.15 + 0.2*pulse})`; ctx.lineWidth = 1;
+    ctx.stroke();
+    // Mid ring
+    ctx.beginPath(); ctx.arc(satSX, satSY, 6, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(0,230,255,${0.35 + 0.2*pulse})`; ctx.lineWidth = 1; ctx.stroke();
+    // Core dot
+    ctx.save(); ctx.shadowColor = '#00e8ff'; ctx.shadowBlur = 14;
+    ctx.beginPath(); ctx.arc(satSX, satSY, 3.5, 0, Math.PI*2);
+    ctx.fillStyle = '#00e8ff'; ctx.fill();
+    ctx.restore();
+    // Satellite label
+    ctx.fillStyle = 'rgba(0,220,255,0.75)'; ctx.font = 'bold 7.5px JetBrains Mono';
+    ctx.fillText(globeSatName.replace('STARLINK-','SL-'), satSX + 8, satSY - 5);
+  }
+
+  // Update info tag
+  const tag = document.getElementById('globe-sat-tag');
+  if (tag) tag.textContent = globeSatName + ' · ' + globeSatLat.toFixed(1) + '°N ' + Math.abs(globeSatLon).toFixed(1) + (globeSatLon < 0 ? '°W' : '°E');
+}
+
+function startGlobe() {
+  if (globeAnimRunning) return;
+  globeAnimRunning = true;
+  (function loop() {
+    if (!globeAnimRunning) return;
+    drawGlobe();
+    requestAnimationFrame(loop);
+  })();
+}
+
+// ════════════════ TERMINAL ════════════════
+const term = document.getElementById('terminal');
+let logCount = 0;
+function log(html, delay=0) {
+  return new Promise(r => setTimeout(() => {
+    const d = document.createElement('div');
+    d.innerHTML = `<span class="t-muted">[${new Date().toLocaleTimeString('en',{hour12:false})}]</span> ${html}`;
+    term.appendChild(d); term.scrollTop = term.scrollHeight;
+    if (++logCount > 400) term.removeChild(term.firstChild);
+    r();
+  }, delay));
+}
+
+// ════════════════ PHASE 0: AUTH ════════════════
+function authSubmit() {
+  const v = document.getElementById('auth-input').value.trim().toUpperCase();
+  const errEl = document.getElementById('auth-error');
+  if (v === ACCESS_CODE.toUpperCase()) {
+    errEl.textContent = '';
+    document.getElementById('auth-btn').textContent = 'ACCESS GRANTED ✓';
+    document.getElementById('auth-btn').style.color = '#00ff88';
+    document.getElementById('auth-btn').style.borderColor = 'rgba(0,255,136,0.5)';
+    setTimeout(() => {
+      document.getElementById('auth-overlay').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('auth-overlay').style.display = 'none';
+        showConnectOverlay();
+      }, 800);
+    }, 700);
+  } else {
+    errEl.textContent = '⚠ ACCESS DENIED — INVALID SECURITY CODE';
+    const inp = document.getElementById('auth-input');
+    inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
+    inp.value = '';
+    setTimeout(() => errEl.textContent = '', 2000);
+  }
+}
+
+// ════════════════ PHASE 1: CONNECT OVERLAY ════════════════
+function showConnectOverlay() {
+  const overlay = document.getElementById('connect-overlay');
+  overlay.style.display = 'flex';
+  // Reveal main UI behind (dimmed)
+  document.getElementById('main-header').style.opacity = '0.15';
+  document.getElementById('main-body').style.opacity = '0.12';
+  // Start WS connection silently
+  initWebSocket();
+}
+
+const connectLines = [
+  {t:'<span class="t-cyan">SDGS GROUND CONTROL SYSTEM v4.1</span>', ms:0},
+  {t:'<span class="t-dim">OPERATOR AUTHENTICATED — LONGJI HE</span>', ms:500},
+  {t:'<span class="t-dim">CLEARANCE LEVEL: ALPHA-5</span>', ms:900},
+  {t:'<span class="t-dim">────────────────────────────────────</span>', ms:1300},
+];
+
+async function startConnect() {
+  const btn = document.getElementById('connect-btn');
+  btn.disabled = true;
+  btn.textContent = '连接中 / CONNECTING...';
+
+  const logEl = document.getElementById('connect-log');
+  const barFill = document.getElementById('connect-bar');
+
+  function clog(html) {
+    const d = document.createElement('div'); d.innerHTML = html;
+    logEl.appendChild(d); logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  // Each entry: [relative_delay_ms, html_string]
+  const steps = [
+    [0,   '<span style="color:#00aa55;">▶ INITIATING SECURE CHANNEL TO CELESTRAK.ORG...</span>'],
+    [550, '<span style="color:#0099aa;">  TCP SYN → 104.168.149.178:443</span>'],
+    [480, '<span style="color:#0099aa;">  TLS 1.2 HANDSHAKE ✓ (celestrak.org)</span>'],
+    [420, '<span style="color:#0099aa;">  CERT VERIFIED: Sectigo RSA ✓</span>'],
+    [500, '<span style="color:#00aa55;">▶ REQUESTING TLE DATABASE (STARLINK GROUP)...</span>'],
+    [580, '<span style="color:#0099aa;">  GET /NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle HTTP/1.1</span>'],
+    [620, '<span style="color:#0099aa;">  HTTP 200 OK · Content-Length: 1,636,488 bytes</span>'],
+    [560, '<span style="color:#00ff88;font-weight:700;">  RECEIVED 9,741 TLE OBJECTS ✓</span>'],
+    [480, '<span style="color:#00aa55;">▶ INITIALIZING SKYFIELD ORBITAL MECHANICS ENGINE...</span>'],
+    [600, '<span style="color:#00ff88;font-weight:700;">  CONNECTION ESTABLISHED — COMMENCING SCAN</span>'],
+  ];
+
+  const totalMs = steps.reduce((acc, s) => acc + s[0], 0);
+  let elapsed = 0;
+  for (const [delay, html] of steps) {
+    await new Promise(r => setTimeout(r, delay));
+    clog(html);
+    elapsed += delay;
+    barFill.style.width = Math.floor(elapsed / totalMs * 96) + '%';
+  }
+  barFill.style.width = '100%';
+
+  await new Promise(r => setTimeout(r, 600));
+
+  // Transition: dismiss connect overlay, reveal main UI
+  const overlay = document.getElementById('connect-overlay');
+  overlay.style.opacity = '0'; overlay.style.transition = 'opacity 0.7s';
+  setTimeout(() => { overlay.style.display = 'none'; }, 700);
+
+  document.getElementById('main-header').style.opacity = '0.6';
+  document.getElementById('main-body').style.opacity = '0.55';
+
+  // Start terminal scan sequence
+  await new Promise(r => setTimeout(r, 800));
+  startTerminalSequence();
+}
+
+// ════════════════ PHASE 2a: TERMINAL SEQUENCE ════════════════
+async function startTerminalSequence() {
+  document.getElementById('main-header').style.opacity = '0.7';
+  document.getElementById('main-body').style.opacity = '0.65';
+
+  const lines = [
+    [0,    '<span class="t-hi">◉ SDGS GROUND CONTROL SYSTEM ONLINE</span>'],
+    [400,  '<span class="t-dim">────────────────────────────────────────</span>'],
+    [700,  '<span class="t-cyan">▶ CELESTRAK TLE DATABASE LOADED</span>'],
+    [1000, '<span class="t-dim">  Objects: 9,741 · Format: 3LE · Group: STARLINK</span>'],
+    [1400, '<span class="t-cyan">▶ SKYFIELD ENGINE INITIALIZED</span>'],
+    [1700, '<span class="t-dim">  Timescale: UTC · Reference: IERS EOP</span>'],
+    [2100, '<span class="t-cyan">▶ GROUND STATION CONFIGURED</span>'],
+    [2400, '<span class="t-dim">  Position: 40.60°N 111.87°W · ALT: 1300m</span>'],
+    [2700, '<span class="t-dim">  Location: Salt Lake City, UT, USA</span>'],
+    [3100, '<span class="t-warn">▶ COMPUTING ELEVATION ANGLES FOR ALL 9,741 OBJECTS...</span>'],
+    [3500, '<span class="t-dim">  Propagating TLE epochs via SGP4/SDP4 model</span>'],
+    [3900, '<span class="t-dim">  Transforming TEME → ITRF → horizontal (az/el)</span>'],
+  ];
+
+  for (const [delay, html] of lines) {
+    await new Promise(r => setTimeout(r, delay));
+    await log(html);
+  }
+
+  // Show scan overlay
+  await new Promise(r => setTimeout(r, 500));
+  startScanOverlay();
+}
+
+// ════════════════ PHASE 2b: SCAN OVERLAY ════════════════
+const fakeSatBatch = [
+  'STARLINK-1008','STARLINK-2156','STARLINK-3301','STARLINK-4712',
+  'STARLINK-5533','STARLINK-1847','STARLINK-6201','STARLINK-2891',
+  'STARLINK-3944','STARLINK-7012','STARLINK-1234','STARLINK-5678',
+  'STARLINK-9100','STARLINK-2345','STARLINK-4567','STARLINK-8901',
+];
+let scanOverlayTimer;
+
+function startScanOverlay() {
+  const overlay = document.getElementById('scan-overlay');
+  overlay.style.display = 'flex';
+
+  const progFill  = document.getElementById('scan-prog-fill');
+  const progLabel = document.getElementById('scan-prog-label');
+  const nameEl    = document.getElementById('scan-sat-name');
+  const phaseEl   = document.getElementById('scan-phase-label');
+  const barFill   = document.getElementById('scan-bar-fill');
+  const statusLine= document.getElementById('status-line');
+
+  let pct = 0, nameIdx = 0, total = 9741;
+  statusLine.textContent = '正在扫描 / SCANNING 0 / 9741 objects...';
+
+  const nameTimer = setInterval(() => {
+    nameEl.textContent = fakeSatBatch[nameIdx % fakeSatBatch.length];
+    nameIdx++;
+  }, 120);
+
+  const progTimer = setInterval(() => {
+    pct = Math.min(pct + 1.4, 100);
+    const count = Math.floor(pct / 100 * total);
+    progFill.style.width = pct + '%';
+    barFill.style.width  = pct + '%';
+    progLabel.textContent = `${count.toLocaleString()} / ${total.toLocaleString()}`;
+    statusLine.textContent = `正在扫描 / SCANNING ${count.toLocaleString()} / ${total.toLocaleString()} objects...`;
+
+    if (pct >= 100) {
+      clearInterval(progTimer);
+      clearInterval(nameTimer);
+      completeScan();
+    }
+  }, 70);
+}
+
+async function completeScan() {
+  const nameEl   = document.getElementById('scan-sat-name');
+  const phaseEl  = document.getElementById('scan-phase-label');
+  const overlay  = document.getElementById('scan-overlay');
+  const statusLine = document.getElementById('status-line');
+
+  phaseEl.textContent = 'TARGET ACQUISITION';
+  document.getElementById('scan-phase-label-zh').textContent = '正在捕获最优目标';
+  nameEl.style.animation = 'none';
+
+  // Get actual best sat from latest data if available
+  const bestName = pendingData?.satellite?.name || 'STARLINK-OPTIMAL';
+  nameEl.textContent = bestName;
+  nameEl.style.color = '#00ff88';
+
+  await new Promise(r => setTimeout(r, 800));
+
+  // Log completion
+  await log('<span class="t-hi">────────────────────────────────────────</span>');
+  await log(`<span class="t-hi">✓ SCAN COMPLETE — 9,741 OBJECTS PROCESSED</span>`);
+  if (pendingData?.scan?.best_alt > 0) {
+    await log(`<span class="t-hi">✓ BEST ELEVATION: ${pendingData.scan.best_alt}°</span>`);
+  }
+  await log(`<span class="t-cyan">▶ OPTIMAL TARGET: ${bestName}</span>`);
+  await log('<span class="t-warn">▶ INITIALIZING DIGITAL TWIN ORBIT MODEL...</span>');
+
+  await new Promise(r => setTimeout(r, 700));
+  await log('<span class="t-hi">◉ DIGITAL TWIN SATELLITE ORBIT — CONFIRMED</span>');
+  await log('<span class="t-hi">◉ GROUND CONTROL LINK — ACTIVE</span>');
+  await log('<span class="t-dim">────────────────────────────────────────</span>');
+
+  statusLine.textContent = '扫描完成 · 目标已锁定 / SCAN COMPLETE — TARGET LOCKED';
+
+  await new Promise(r => setTimeout(r, 600));
+
+  // Dismiss scan overlay
+  overlay.style.opacity = '0'; overlay.style.transition = 'opacity 0.5s';
+  setTimeout(() => { overlay.style.display = 'none'; overlay.style.opacity = '1'; overlay.style.transition = ''; }, 500);
+
+  // Reveal everything
+  document.getElementById('main-header').style.opacity = '1';
+  document.getElementById('main-body').style.opacity = '1';
+  document.getElementById('locked-panel').style.display = 'block';
+
+  const badge = document.getElementById('source-badge');
+  badge.className = 'badge-ce text-xs px-2.5 py-0.5 rounded-full font-bold';
+  badge.textContent = '✅ CELESTRAK';
+
+  // Show visible pool panel
+  document.getElementById('pool-panel').style.display = 'block';
+  document.getElementById('btn-next-pool').disabled = false;
+
+  // Activate charts
+  document.getElementById('charts-dim').classList.add('active');
+  chartsActive = true;
+  systemOnline = true;
+  scanComplete = true;
+
+  // Start globe animation
+  startGlobe();
+
+  await log('<span class="t-cyan">▶ DATA STREAMS ACTIVATED — ALL SYSTEMS NOMINAL</span>');
+
+  // Push buffered data
+  if (pendingData) processTelemetry(pendingData);
+}
+
+// ════════════════ WEBSOCKET ════════════════
+let ws;
+function initWebSocket() {
+  ws = new WebSocket(`${location.protocol==='https:'?'wss:':'ws:'}//${location.host}/ws`);
+  ws.onmessage = e => {
+    const d = JSON.parse(e.data);
+    pendingData = d;
+    if (chartsActive) processTelemetry(d);
+    // Update scan overlay labels live from real backend data
+    if (d.scan?.scanning && d.scan.total > 0) {
+      const nameEl = document.getElementById('scan-sat-name');
+      // Let the fake name animation run; only update progress label from real data
+    }
+    if (d.scan?.complete && !scanComplete) {
+      // Backend scan finished while frontend might still be animating — that's fine
+    }
+  };
+  ws.onclose = () => {
+    document.getElementById('val-status').textContent = '⚠️ WebSocket 断开，请刷新';
+  };
+  wsConnected = true;
+}
+
+// KPI 显示节流：每 1000ms 最多刷新一次数字，避免高频抖动
+let _lastKpiTs = 0;
+
+function processTelemetry(d) {
+  const now = Date.now();
+  const kpiReady = (now - _lastKpiTs) >= 1000;   // 1 秒节流
+
+  if (kpiReady) {
+    _lastKpiTs = now;
+
+    // KPIs
+    document.getElementById('val-ta').textContent    = d.phy.ta;
+    document.getElementById('val-cfo').textContent   = d.phy.cfo;
+    document.getElementById('val-tput').textContent   = d.net.throughput.toFixed(1);
+    if (d.net.jitter != null)
+      document.getElementById('val-jitter').textContent = d.net.jitter.toFixed(1);
+
+    // Delay & Loss: real Pi measurement or simulation
+    if (realModeActive && d.real) {
+      const dlbl = document.getElementById('delay-label-sub');
+      const llbl = document.getElementById('loss-mode-label');
+      if (d.real.reachable) {
+        document.getElementById('val-delay').textContent =
+          d.real.delay !== null ? d.real.delay.toFixed(1) : '--';
+        document.getElementById('val-loss').textContent =
+          d.real.loss !== null ? d.real.loss.toFixed(1) : '--';
+        const via = d.real.via || 'Pi';
+        if (dlbl) { dlbl.textContent = `ONE-WAY · ${via}`; dlbl.style.color = '#00cc66'; }
+        if (llbl) { llbl.textContent = `PKT LOSS · ${via}`; llbl.style.color = '#00cc66'; }
+      } else {
+        document.getElementById('val-delay').textContent = '—';
+        document.getElementById('val-loss').textContent  = '—';
+        const viaText = d.real.via === 'timeout' ? 'Pi 超时' : 'Pi 离线';
+        if (dlbl) { dlbl.textContent = `ONE-WAY · ${viaText}`; dlbl.style.color = '#cc4444'; }
+        if (llbl) { llbl.textContent = `PKT LOSS · ${viaText}`; llbl.style.color = '#cc4444'; }
+      }
+    } else {
+      document.getElementById('val-delay').textContent = d.net.delay;
+      document.getElementById('val-loss').textContent  = d.net.loss;
+    }
+    document.getElementById('val-ele').textContent   = d.orbit.alt;
+    document.getElementById('val-dist').textContent  = d.orbit.dist;
+  }
+
+  // Status / AI btn / Satellite info：同样跟随 1s 节流
+  if (kpiReady) {
+    const statusEl = document.getElementById('val-status');
+    const cardEl   = document.getElementById('status-card');
+    statusEl.textContent = d.diag.status;
+    if (d.diag.color === 'danger') {
+      statusEl.className = 'blink-danger'; statusEl.style.cssText = 'font-size:17px;font-weight:700;';
+      cardEl.style.borderLeftColor='var(--rose)'; cardEl.style.background='rgba(80,8,18,0.22)';
+    } else if (d.diag.color === 'warning') {
+      statusEl.className=''; statusEl.style.cssText='font-size:17px;font-weight:700;color:var(--amber);';
+      cardEl.style.borderLeftColor='var(--amber)'; cardEl.style.background='';
+    } else {
+      statusEl.className=''; statusEl.style.cssText='font-size:17px;font-weight:700;color:var(--emerald);';
+      cardEl.style.borderLeftColor='var(--emerald)'; cardEl.style.background='';
+    }
+
+    const btnAI = document.getElementById('btn-ai');
+    if (d.state.edge_ai_enabled) {
+      btnAI.className='btn-ai px-4 py-2 rounded text-sm transition-all font-semibold';
+      btnAI.textContent='Edge-AI PID: 开启';
+    } else {
+      btnAI.className='btn-ai-off px-4 py-2 rounded text-sm transition-all font-semibold';
+      btnAI.textContent='Edge-AI PID: 关闭 (Baseline)';
+    }
+
+    if (d.satellite && !isAcquiring) {
+      document.getElementById('locked-name').textContent   = d.satellite.name;
+      document.getElementById('locked-epoch').textContent  = d.satellite.epoch !== 'N/A' ? d.satellite.epoch : '—';
+      document.getElementById('locked-index').textContent  = d.satellite.index;
+      document.getElementById('locked-total').textContent  = d.satellite.total;
+    }
+  }
+
+  // ── Handover pre-warm panel ──
+  if (d.handover) {
+    const hw = d.handover;
+    const panel = document.getElementById('handover-panel');
+    const badge = document.getElementById('handover-phase-badge');
+    if (hw.phase === 'NORMAL' || hw.phase === 'CLEANUP') {
+      panel.style.display = 'none';
+    } else {
+      panel.style.display = 'flex';
+      const phaseColor = {
+        PRE_WARN:  '#f59e0b',
+        PRE_WARM:  '#22d3ee',
+        SWITCHING: '#a78bfa',
+      }[hw.phase] || '#f59e0b';
+      panel.style.borderLeftColor = phaseColor;
+      badge.style.background = phaseColor + '22';
+      badge.style.color = phaseColor;
+      badge.textContent = hw.phase;
+      document.getElementById('handover-sat-name').textContent  = hw.standby_name || '—';
+      document.getElementById('handover-sat-name').style.color  = phaseColor;
+      document.getElementById('handover-sat-alt').textContent   = hw.standby_alt   != null ? hw.standby_alt   : '—';
+      document.getElementById('handover-sat-delay').textContent = hw.standby_delay != null ? hw.standby_delay.toFixed(1) : '—';
+      document.getElementById('handover-sat-loss').textContent  = hw.standby_loss  != null ? hw.standby_loss  : '—';
+    }
+  }
+
+  // Globe geo update
+  if (d.orbit && typeof d.orbit.lat === 'number') {
+    globeSatLat = d.orbit.lat;
+    globeSatLon = d.orbit.lon;
+  }
+  if (d.satellite && d.satellite.name) {
+    globeSatName = d.satellite.name;
+  }
+
+  // ── Visible Pool update ──
+  if (d.pool !== undefined && scanComplete) {
+    updatePoolPanel(d.pool, d.satellite?.index ? (d.satellite.index - 1) : -1, d);
+  }
+
+  // ── Auto-switch: play acquisition animation when backend triggers ──
+  if (d.auto_switch === true && scanComplete) {
+    triggerAutoAcquisition(d.satellite?.name || '—');
+  }
+
+  // Charts
+  if (tData.length >= MAX_PTS) { tData.shift(); tput.shift(); dlay.shift(); jitt.shift(); loss_.shift(); }
+  tData.push(d.time);
+  tput.push(d.net.throughput);
+  dlay.push(d.net.delay);
+  jitt.push(d.net.jitter != null ? d.net.jitter : null);
+  loss_.push(d.net.loss);
+  chartTput.setOption({xAxis:{data:tData},series:[{data:tput}]});
+  chartDL.setOption({xAxis:{data:tData},series:[{data:dlay},{data:jitt},{data:loss_}]});
+}
+
+// ════════════════ VISIBLE POOL PANEL ════════════════
+let currentPoolIdx = -1;  // tracks which top_sats index is currently active
+
+function updatePoolPanel(pool, activeTopIdx, d) {
+  const countEl = document.getElementById('pool-count-badge');
+  const listEl  = document.getElementById('pool-list');
+  if (!listEl) return;
+
+  if (!pool || pool.length === 0) {
+    countEl.textContent = '暂无过境卫星 · NONE IN PASS';
+    countEl.style.color = '#ff6677';
+    listEl.innerHTML = '<div id="pool-refreshing" style="color:#5a3a3a;">当前仰角>25° 暂无卫星 / NONE ABOVE 25°</div>';
+    return;
+  }
+
+  countEl.textContent = `${pool.length} 颗过境中 · IN-PASS (>25°)`;
+  countEl.style.color = '#00ff88';
+
+  // Find the active entry by matching the satellite name
+  const activeName = globeSatName;
+
+  let html = '';
+  for (const entry of pool) {
+    const isActive = entry.name === activeName;
+    const shortName = entry.name.replace('STARLINK-', 'SL-');
+    const altColor = entry.alt > 60 ? '#00ff88' : entry.alt > 40 ? '#ffcc44' : '#00cc66';
+    html += `<div class="pool-entry${isActive ? ' active' : ''}" onclick="switchToSat(${entry.idx}, '${entry.name}')" title="${entry.name} · El: ${entry.alt}°">
+      <span class="pool-entry-name">${shortName}</span>
+      <span class="pool-entry-alt" style="color:${isActive ? '#00e8ff' : altColor};">▲${entry.alt}°</span>
+    </div>`;
+  }
+  listEl.innerHTML = html;
+}
+
+function switchToSat(topIdx, name) {
+  if (!ws || !scanComplete) return;
+  ws.send(JSON.stringify({switch_to_sat: topIdx}));
+  globeSatName = name;
+  log(`<span class="t-cyan">▶ 切换目标: ${name}</span>`);
+}
+
+// ════════════════ NEXT SAT (instant, pool-based) ════════════════
+function requestNextSat() {
+  if (!scanComplete || !ws) return;
+  ws.send(JSON.stringify({next_satellite: true}));
+  log('<span class="t-hi">◉ NEXT SAT → 已从可见池中选取 / SELECTED FROM VISIBLE POOL</span>');
+}
+
+// ════════════════ AUTO-ACQUISITION ANIMATION ════════════════
+let autoAcqRunning = false;
+
+function triggerAutoAcquisition(newSatName) {
+  if (autoAcqRunning) return;   // guard: only one animation at a time
+  autoAcqRunning = true;
+
+  const overlay   = document.getElementById('scan-overlay');
+  const phaseZh   = document.getElementById('scan-phase-label-zh');
+  const phaseEn   = document.getElementById('scan-phase-label');
+  const nameEl    = document.getElementById('scan-sat-name');
+  const progFill  = document.getElementById('scan-prog-fill');
+  const progLabel = document.getElementById('scan-prog-label');
+  const statusLine= document.getElementById('status-line');
+
+  // Set labels for auto-switch mode
+  phaseZh.textContent  = '仰角过低 · 自动切换新目标';
+  phaseEn.textContent  = 'AUTO RE-ACQUISITION';
+  nameEl.style.color   = '#ffcc44';
+  nameEl.style.animation = 'name-flicker 0.25s ease-in-out infinite';
+  nameEl.textContent   = '正在捕获新目标...';
+  progFill.style.transition = 'none';
+  progFill.style.width = '0%';
+  progLabel.textContent = '0%';
+
+  overlay.style.opacity = '1';
+  overlay.style.display = 'flex';
+
+  // Log it
+  log(`<span class="t-warn">▶ 仰角进入切换区间 (25-30°)，自动接管: ${newSatName}</span>`);
+
+  // Animate progress bar over ~2.5 seconds
+  let pct = 0;
+  const timer = setInterval(() => {
+    pct = Math.min(pct + 2.5, 100);
+    progFill.style.transition = 'width 0.05s linear';
+    progFill.style.width = pct + '%';
+    progLabel.textContent = Math.floor(pct) + '%';
+
+    if (pct >= 100) {
+      clearInterval(timer);
+      nameEl.style.animation = 'none';
+      nameEl.style.color = '#00ff88';
+      nameEl.textContent = newSatName;
+
+      setTimeout(() => {
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.5s';
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          overlay.style.opacity = '1';
+          overlay.style.transition = '';
+          // Reset labels back to normal scan state
+          phaseZh.textContent = '正在扫描轨道数据库';
+          phaseEn.textContent = 'SCANNING ORBITAL DATABASE';
+          autoAcqRunning = false;
+          statusLine.textContent = '自动切换完成 · AUTO HANDOFF COMPLETE';
+          log(`<span class="t-hi">◉ 自动切换完成 → ${newSatName} 已锁定</span>`);
+        }, 500);
+      }, 700);
+    }
+  }, 50);
+}
+
+// ════════════════ CONTROLS ════════════════
+function toggleAI()       { if(ws) ws.send(JSON.stringify({toggle_ai:true})); }
+function toggleHandover() { if(ws) ws.send(JSON.stringify({force_handover:true})); }
+
+// ════════════════ MEASUREMENT MODE TOGGLE ════════════════
+let realModeActive = false;
+function toggleMeasureMode() {
+  if (!ws || !scanComplete) return;
+  ws.send(JSON.stringify({toggle_measurement_mode: true}));
+  realModeActive = !realModeActive;
+  const dot  = document.getElementById('measure-mode-dot');
+  const btn  = document.getElementById('btn-measure-toggle');
+  const lbl  = document.getElementById('loss-mode-label');
+  const dlbl = document.getElementById('delay-label-sub');
+  if (realModeActive) {
+    dot.style.background  = '#00ff88';
+    btn.style.borderColor = 'rgba(0,255,136,0.6)';
+    btn.style.boxShadow   = '0 0 8px rgba(0,255,100,0.3)';
+    lbl.textContent  = 'PKT LOSS · REAL Pi';
+    lbl.style.color  = '#00cc66';
+    dlbl.textContent = 'ONE-WAY · REAL Pi';
+    dlbl.style.color = '#00cc66';
+    // also mark throughput as always-sim
+    const tputSub = document.getElementById('tput-sub-label');
+    if (tputSub) { tputSub.textContent = 'TCP BBR · SIM ONLY'; tputSub.style.color = '#886600'; }
+  } else {
+    dot.style.background  = '#3a5a4a';
+    btn.style.borderColor = 'rgba(0,200,100,0.4)';
+    btn.style.boxShadow   = '';
+    lbl.textContent  = 'PKT LOSS · SIM';
+    lbl.style.color  = 'var(--muted)';
+    dlbl.textContent = 'ONE-WAY · SIM';
+    dlbl.style.color = 'var(--muted)';
+    const tputSub = document.getElementById('tput-sub-label');
+    if (tputSub) { tputSub.textContent = 'TCP BBR'; tputSub.style.color = 'var(--muted)'; }
+  }
+}
+
+window.addEventListener('resize',()=>{ chartTput.resize(); chartDL.resize(); });
+
+// Focus auth input
+document.getElementById('auth-input').focus();
+
+// ─ auth error text fix ─
+document.getElementById('auth-btn').addEventListener('click', authSubmit);
+</script>
+</body>
+</html>

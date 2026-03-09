@@ -1,0 +1,26 @@
+# Paper docs and project documentation (private)
+docs/
+
+# Large data files
+logs/
+dataset/
+starlink.tle
+
+# WireGuard private keys
+*.key
+wg1_ubuntu.conf
+wg1_ubuntu_private.key
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Log files
+*.log
+auto_postprocess.sh
+supplemental_runner.log
+postprocess_final.log
+
+# Runtime artifacts
+engine_*.log
