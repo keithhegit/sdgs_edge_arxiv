@@ -1,4 +1,4 @@
 Metric,Model-Driven (Engine),Measured (Pi Ping),Deviation
-One-way Delay (ms),10.00 ± 0.00,3.69 ± 0.28,-63.1%
-Packet Loss (%),100.000 ± 0.000,0.0 ± 0.0,-100.0%
-Jitter / mdev (ms),0.00 ± 0.00,1.69 ± 0.45,N/A
+One-way Delay (ms),31.72 ± 8.06,5.64 ± 1.99,-82.2%
+Packet Loss (%),0.521 ± 0.852,1.1 ± 3.1,+103.8%
+Jitter / mdev (ms),1.27 ± 0.32,8.93 ± 9.71,+603.6%

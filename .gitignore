@@ -2,7 +2,7 @@
 docs/
 
 # Large data files
-logs/
+# logs/ — now tracked (raw telemetry for reproducibility)
 # dataset/ — now tracked (post-processed CSVs and summaries)
 starlink.tle
 

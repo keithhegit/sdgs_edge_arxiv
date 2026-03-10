@@ -1,0 +1,28 @@
+{
+  "run_id": "run_20260309_083507_A11",
+  "run_label": "A11",
+  "start_time": "2026-03-09T08:35:07.944191Z",
+  "ground_station": {
+    "lat": 22.54,
+    "lon": 114.05,
+    "alt_m": 20,
+    "name": "Shenzhen"
+  },
+  "tle_objects": 9741,
+  "edge_ai_initial": true,
+  "measurement_mode": "simulated",
+  "pid_params": {
+    "kp": 0.5,
+    "ki": 0.1,
+    "kd": 0.05
+  },
+  "model_params": {
+    "ground_network_ms": 10.0,
+    "fronthaul_sched_ms": 6.0,
+    "processing_ms": 5.0,
+    "min_elevation_deg": 25.0,
+    "ema_alpha": 0.15,
+    "cp_tolerance_us": 2.34,
+    "scs_tolerance_hz": 90.0
+  }
+}

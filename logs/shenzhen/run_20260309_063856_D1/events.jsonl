@@ -1,0 +1,14 @@
+{"ts": "2026-03-09T06:38:56.907Z", "event": "RUN_START", "run_id": "run_20260309_063856_D1", "run_label": "D1"}
+{"ts": "2026-03-09T06:39:17.198Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.99, "standby_name": "STARLINK-30927", "standby_elev": 77.6, "elapsed_s": 20.3}
+{"ts": "2026-03-09T06:39:30.234Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 34.99, "standby_name": "STARLINK-30927", "standby_elev": 57.4, "elapsed_s": 33.3}
+{"ts": "2026-03-09T06:39:45.955Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 30.0, "standby_name": "STARLINK-30927", "standby_elev": 48.3, "elapsed_s": 49.0}
+{"ts": "2026-03-09T06:39:46.059Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 48.15, "standby_name": null, "standby_elev": null, "elapsed_s": 49.2}
+{"ts": "2026-03-09T06:40:03.441Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 40.0, "standby_name": "STARLINK-32240", "standby_elev": 86.7, "elapsed_s": 66.5}
+{"ts": "2026-03-09T06:40:16.569Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 35.0, "standby_name": "STARLINK-32240", "standby_elev": 66.3, "elapsed_s": 79.7}
+{"ts": "2026-03-09T06:40:32.479Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 29.98, "standby_name": "STARLINK-32240", "standby_elev": 55.4, "elapsed_s": 95.6}
+{"ts": "2026-03-09T06:40:32.583Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 55.24, "standby_name": null, "standby_elev": null, "elapsed_s": 95.7}
+{"ts": "2026-03-09T06:41:02.178Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.98, "standby_name": "STARLINK-1802", "standby_elev": 73.7, "elapsed_s": 125.3}
+{"ts": "2026-03-09T06:41:15.342Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 34.95, "standby_name": "STARLINK-1802", "standby_elev": 86.0, "elapsed_s": 138.4}
+{"ts": "2026-03-09T06:41:31.266Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 29.94, "standby_name": "STARLINK-1802", "standby_elev": 76.3, "elapsed_s": 154.4}
+{"ts": "2026-03-09T06:41:31.495Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 75.93, "standby_name": null, "standby_elev": null, "elapsed_s": 154.6}
+{"ts": "2026-03-09T06:41:57.344Z", "event": "RUN_STOP", "duration_s": 180.4, "total_rows": 1649}

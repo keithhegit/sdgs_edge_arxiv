@@ -1,5 +1,5 @@
 Metric,Edge-AI (A),Baseline (B),Improvement
-Aggregate Throughput (Mbps),188.82 ± 12.28,0.00 ± 0.00,N/A
-Mean Latency (ms),34.40 ± 0.81,10.00 ± 0.00,--244.0%
-95th-Pct Latency (ms),52.24 ± 5.07,10.00 ± 0.00,—
-Handover Success Rate (%),66.67 ± 57.74,0.00 ± 0.00,—
+Aggregate Throughput (Mbps),198.53 ± 5.99,80.02 ± 0.11,+148.1%
+Mean Latency (ms),32.95 ± 1.16,71.21 ± 0.89,-53.7%
+95th-Pct Latency (ms),54.07 ± 2.87,93.00 ± 1.12,—
+Handover Success Rate (%),100.00 ± 0.00,100.00 ± 0.00,—

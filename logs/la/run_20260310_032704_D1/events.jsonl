@@ -1,0 +1,11 @@
+{"ts": "2026-03-10T03:27:04.359Z", "event": "RUN_START", "run_id": "run_20260310_032704_D1", "run_label": "D1"}
+{"ts": "2026-03-10T03:27:04.435Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARM", "primary_elev": 32.85, "standby_name": "STARLINK-5699", "standby_elev": 59.0, "elapsed_s": 0.1}
+{"ts": "2026-03-10T03:27:15.357Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 30.0, "standby_name": "STARLINK-5699", "standby_elev": 53.8, "elapsed_s": 11.0}
+{"ts": "2026-03-10T03:27:15.461Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 53.65, "standby_name": null, "standby_elev": null, "elapsed_s": 11.1}
+{"ts": "2026-03-10T03:27:49.185Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.98, "standby_name": "STARLINK-4156", "standby_elev": 70.4, "elapsed_s": 44.8}
+{"ts": "2026-03-10T03:28:04.909Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 34.98, "standby_name": "STARLINK-4156", "standby_elev": 83.6, "elapsed_s": 60.6}
+{"ts": "2026-03-10T03:28:23.548Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 30.0, "standby_name": "STARLINK-4156", "standby_elev": 79.4, "elapsed_s": 79.2}
+{"ts": "2026-03-10T03:28:23.652Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 79.22, "standby_name": null, "standby_elev": null, "elapsed_s": 79.3}
+{"ts": "2026-03-10T03:29:34.837Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.99, "standby_name": "STARLINK-32083", "standby_elev": 66.8, "elapsed_s": 150.5}
+{"ts": "2026-03-10T03:29:49.573Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 35.0, "standby_name": "STARLINK-32083", "standby_elev": 51.8, "elapsed_s": 165.2}
+{"ts": "2026-03-10T03:30:04.548Z", "event": "RUN_STOP", "duration_s": 180.2, "total_rows": 1637}

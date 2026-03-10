@@ -1,0 +1,6 @@
+{"ts": "2026-03-10T03:08:02.704Z", "event": "RUN_START", "run_id": "run_20260310_030802_A1", "run_label": "A1"}
+{"ts": "2026-03-10T03:09:26.240Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.97, "standby_name": "STARLINK-5684", "standby_elev": 77.4, "elapsed_s": 83.5}
+{"ts": "2026-03-10T03:09:40.927Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 34.97, "standby_name": "STARLINK-5684", "standby_elev": 85.5, "elapsed_s": 98.2}
+{"ts": "2026-03-10T03:09:58.490Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 29.98, "standby_name": "STARLINK-5684", "standby_elev": 74.7, "elapsed_s": 115.8}
+{"ts": "2026-03-10T03:09:58.595Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 74.51, "standby_name": null, "standby_elev": null, "elapsed_s": 115.9}
+{"ts": "2026-03-10T03:11:03.065Z", "event": "RUN_STOP", "duration_s": 180.4, "total_rows": 1637}

@@ -1,0 +1,4 @@
+{"ts": "2026-03-09T08:41:18.713Z", "event": "RUN_START", "run_id": "run_20260309_084118_B4", "run_label": "B4"}
+{"ts": "2026-03-09T08:41:18.740Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "SWITCHING", "primary_elev": -0.75, "standby_name": "STARLINK-33641", "standby_elev": 36.8, "elapsed_s": 0.0}
+{"ts": "2026-03-09T08:41:18.740Z", "event": "EDGE_AI_TOGGLE", "enabled": false, "elapsed_s": 0.0}
+{"ts": "2026-03-09T08:47:19.132Z", "event": "RUN_STOP", "duration_s": 360.4, "total_rows": 3295}

@@ -1,0 +1,18 @@
+{"ts": "2026-03-09T06:32:35.579Z", "event": "RUN_START", "run_id": "run_20260309_063235_B2", "run_label": "B2"}
+{"ts": "2026-03-09T06:32:35.620Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARM", "primary_elev": 34.21, "standby_name": "STARLINK-2319", "standby_elev": 58.3, "elapsed_s": 0.0}
+{"ts": "2026-03-09T06:32:35.620Z", "event": "EDGE_AI_TOGGLE", "enabled": false, "elapsed_s": 0.0}
+{"ts": "2026-03-09T06:32:49.424Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 29.97, "standby_name": "STARLINK-2319", "standby_elev": 50.6, "elapsed_s": 13.8}
+{"ts": "2026-03-09T06:32:49.528Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 50.49, "standby_name": null, "standby_elev": null, "elapsed_s": 13.9}
+{"ts": "2026-03-09T06:33:12.122Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.99, "standby_name": "STARLINK-35366", "standby_elev": 89.1, "elapsed_s": 36.5}
+{"ts": "2026-03-09T06:33:25.562Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 34.98, "standby_name": "STARLINK-35366", "standby_elev": 69.4, "elapsed_s": 50.0}
+{"ts": "2026-03-09T06:33:41.588Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 30.0, "standby_name": "STARLINK-35366", "standby_elev": 58.2, "elapsed_s": 66.0}
+{"ts": "2026-03-09T06:33:41.692Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 58.04, "standby_name": null, "standby_elev": null, "elapsed_s": 66.1}
+{"ts": "2026-03-09T06:34:16.507Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.99, "standby_name": "STARLINK-11505 [DTC]", "standby_elev": 77.0, "elapsed_s": 100.9}
+{"ts": "2026-03-09T06:34:29.891Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 34.99, "standby_name": "STARLINK-11505 [DTC]", "standby_elev": 74.0, "elapsed_s": 114.3}
+{"ts": "2026-03-09T06:34:46.051Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 30.0, "standby_name": "STARLINK-11505 [DTC]", "standby_elev": 58.3, "elapsed_s": 130.5}
+{"ts": "2026-03-09T06:34:46.155Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 58.1, "standby_name": null, "standby_elev": null, "elapsed_s": 130.6}
+{"ts": "2026-03-09T06:35:11.976Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.95, "standby_name": "STARLINK-6074", "standby_elev": 82.2, "elapsed_s": 156.4}
+{"ts": "2026-03-09T06:35:21.997Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 34.96, "standby_name": "STARLINK-6074", "standby_elev": 66.6, "elapsed_s": 166.4}
+{"ts": "2026-03-09T06:35:34.225Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 29.96, "standby_name": "STARLINK-6074", "standby_elev": 59.4, "elapsed_s": 178.6}
+{"ts": "2026-03-09T06:35:34.329Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 59.27, "standby_name": null, "standby_elev": null, "elapsed_s": 178.8}
+{"ts": "2026-03-09T06:35:36.099Z", "event": "RUN_STOP", "duration_s": 180.5, "total_rows": 1647}

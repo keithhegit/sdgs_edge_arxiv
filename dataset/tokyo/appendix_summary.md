@@ -16,7 +16,7 @@ Edge-AI PID controller state. When residuals exceed NR CP/SCS thresholds
 into the WireGuard tunnel. End-to-end ICMP probes on physical Raspberry Pi hardware
 provide independent measurements of the injected link characteristics (Table 3).
 
-**Dataset:** 7 runs collected, 11,514 total 10-Hz telemetry ticks.
+**Dataset:** 7 runs collected, 11,459 total 10-Hz telemetry ticks.
 Run labels: A1–A3 (Edge-AI ON), B1–B3 (Baseline/AI-OFF), D1 (Fidelity check with
 real Pi ICMP measurement).
 
@@ -26,10 +26,10 @@ real Pi ICMP measurement).
 
 | Metric | Edge-AI (A) | Baseline (B) | Improvement |
 |---|---|---|---|
-| Aggregate Throughput (Mbps) | 195.61 ± 4.37 | 54.79 ± 43.59 | +257.0% |
-| Mean Latency (ms) | 31.07 ± 0.89 | 51.66 ± 32.79 | -39.9% |
-| 95th-Pct Latency (ms) | 48.92 ± 2.47 | 83.07 ± 15.33 | — |
-| Handover Success Rate (%) | 100.00 ± 0.00 | 55.56 ± 50.92 | — |
+| Aggregate Throughput (Mbps) | 196.58 ± 4.88 | 79.87 ± 0.07 | +146.1% |
+| Mean Latency (ms) | 31.94 ± 0.62 | 70.38 ± 1.30 | -54.6% |
+| 95th-Pct Latency (ms) | 53.32 ± 3.96 | 91.76 ± 0.89 | — |
+| Handover Success Rate (%) | 100.00 ± 0.00 | 100.00 ± 0.00 | — |
 
 > *Improvement* is computed relative to the Baseline group.
 > Only NORMAL-phase ticks (excluding active handover windows) are included in
@@ -41,10 +41,10 @@ real Pi ICMP measurement).
 
 | Metric | Median (P50) | 95th Pct (P95) | 99th Pct (P99) |
 |---|---|---|---|
-| Residual TA  open-loop  (µs) | 2.76 | 3.59 | 3.68 |
-| Residual TA  closed-loop (µs) | 0.45 | 0.50 | 0.50 |
-| Residual CFO open-loop  (Hz) | 766.10 | 850.90 | 857.96 |
-| Residual CFO closed-loop (Hz) | 71.90 | 76.60 | 76.90 |
+| Residual TA  open-loop  (µs) | 3.19 | 3.65 | 3.69 |
+| Residual TA  closed-loop (µs) | 0.45 | 0.49 | 0.50 |
+| Residual CFO open-loop  (Hz) | 811.50 | 856.30 | 859.20 |
+| Residual CFO closed-loop (Hz) | 72.00 | 76.50 | 76.90 |
 
 > *Open-loop* = Edge-AI OFF (Baseline group, B1–B3), reflecting the uncompensated
 > residual from orbital geometry alone. *Closed-loop* = Edge-AI ON (group A1–A3),
@@ -56,9 +56,9 @@ real Pi ICMP measurement).
 
 | Metric | Model-Driven (Engine) | Measured (Pi Ping) | Deviation |
 |---|---|---|---|
-| One-way Delay (ms) | 10.00 ± 0.00 | 3.71 ± 0.12 | -62.9% |
-| Packet Loss (%) | 100.000 ± 0.000 | 1.1 ± 3.1 | -98.9% |
-| Jitter / mdev (ms) | 0.00 ± 0.00 | 1.66 ± 0.45 | N/A |
+| One-way Delay (ms) | 31.52 ± 7.57 | 6.24 ± 6.13 | -80.2% |
+| Packet Loss (%) | 0.556 ± 0.888 | 2.9 ± 5.3 | +418.6% |
+| Jitter / mdev (ms) | 1.26 ± 0.30 | 6.80 ± 12.95 | +439.6% |
 
 > Independent ICMP (ping) probes from Raspberry Pi measure the actual injected
 > link characteristics, providing ground-truth validation of the simulation pipeline.

@@ -1,0 +1,48 @@
+{
+  "completed_at": "2026-03-09T07:23:35.574443Z",
+  "duration_per_run_s": 180,
+  "results": [
+    {
+      "label": "A1",
+      "run_id": "run_20260309_070131_A1",
+      "status": "ok",
+      "rows": 1645
+    },
+    {
+      "label": "A2",
+      "run_id": "run_20260309_070442_A2",
+      "status": "ok",
+      "rows": 1652
+    },
+    {
+      "label": "A3",
+      "run_id": "run_20260309_070752_A3",
+      "status": "ok",
+      "rows": 1654
+    },
+    {
+      "label": "B1",
+      "run_id": "run_20260309_071103_B1",
+      "status": "ok",
+      "rows": 1651
+    },
+    {
+      "label": "B2",
+      "run_id": "run_20260309_071413_B2",
+      "status": "ok",
+      "rows": 1652
+    },
+    {
+      "label": "B3",
+      "run_id": "run_20260309_071724_B3",
+      "status": "ok",
+      "rows": 1650
+    },
+    {
+      "label": "D1",
+      "run_id": "run_20260309_072035_D1",
+      "status": "ok",
+      "rows": 1650
+    }
+  ]
+}

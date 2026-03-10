@@ -1,0 +1,3 @@
+{"ts": "2026-03-09T07:04:42.250Z", "event": "RUN_START", "run_id": "run_20260309_070442_A2", "run_label": "A2"}
+{"ts": "2026-03-09T07:04:42.329Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "SWITCHING", "primary_elev": 15.42, "standby_name": "STARLINK-33641", "standby_elev": 36.8, "elapsed_s": 0.1}
+{"ts": "2026-03-09T07:07:42.731Z", "event": "RUN_STOP", "duration_s": 180.5, "total_rows": 1652}

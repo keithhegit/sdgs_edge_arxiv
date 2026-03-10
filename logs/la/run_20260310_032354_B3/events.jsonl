@@ -1,0 +1,12 @@
+{"ts": "2026-03-10T03:23:54.125Z", "event": "RUN_START", "run_id": "run_20260310_032354_B3", "run_label": "B3"}
+{"ts": "2026-03-10T03:23:54.213Z", "event": "EDGE_AI_TOGGLE", "enabled": false, "elapsed_s": 0.1}
+{"ts": "2026-03-10T03:24:01.791Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.96, "standby_name": "STARLINK-35447", "standby_elev": 85.2, "elapsed_s": 7.7}
+{"ts": "2026-03-10T03:24:15.166Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 35.0, "standby_name": "STARLINK-35447", "standby_elev": 71.0, "elapsed_s": 21.0}
+{"ts": "2026-03-10T03:24:31.472Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 29.98, "standby_name": "STARLINK-35447", "standby_elev": 59.6, "elapsed_s": 37.3}
+{"ts": "2026-03-10T03:24:31.576Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 59.42, "standby_name": null, "standby_elev": null, "elapsed_s": 37.5}
+{"ts": "2026-03-10T03:25:08.819Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.98, "standby_name": "STARLINK-5803", "standby_elev": 79.4, "elapsed_s": 74.7}
+{"ts": "2026-03-10T03:25:22.311Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARN", "to_phase": "PRE_WARM", "primary_elev": 34.97, "standby_name": "STARLINK-5803", "standby_elev": 82.4, "elapsed_s": 88.2}
+{"ts": "2026-03-10T03:25:38.521Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "PRE_WARM", "to_phase": "SWITCHING", "primary_elev": 29.98, "standby_name": "STARLINK-5803", "standby_elev": 71.9, "elapsed_s": 104.4}
+{"ts": "2026-03-10T03:25:38.626Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "SWITCHING", "to_phase": "NORMAL", "primary_elev": 71.72, "standby_name": null, "standby_elev": null, "elapsed_s": 104.5}
+{"ts": "2026-03-10T03:26:41.639Z", "event": "HANDOVER_PHASE_CHANGE", "from_phase": "NORMAL", "to_phase": "PRE_WARN", "primary_elev": 39.97, "standby_name": "STARLINK-5699", "standby_elev": 70.7, "elapsed_s": 167.5}
+{"ts": "2026-03-10T03:26:54.338Z", "event": "RUN_STOP", "duration_s": 180.2, "total_rows": 1636}
