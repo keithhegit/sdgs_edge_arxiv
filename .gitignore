@@ -3,7 +3,7 @@ docs/
 
 # Large data files
 logs/
-dataset/
+# dataset/ — now tracked (post-processed CSVs and summaries)
 starlink.tle
 
 # WireGuard private keys
@@ -24,3 +24,5 @@ postprocess_final.log
 
 # Runtime artifacts
 engine_*.log
+overnight_runner.sh
+overnight.log

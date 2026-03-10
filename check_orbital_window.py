@@ -26,9 +26,10 @@ from skyfield.api import load, wgs84, EarthSatellite
 
 # ── Ground stations to check ───────────────────────────────────────────────
 STATIONS = [
-    {"name": "Shenzhen",    "lat": 22.54,  "lon": 114.05, "alt": 20},
-    {"name": "Beijing",     "lat": 39.90,  "lon": 116.40, "alt": 43},
-    {"name": "Los Angeles", "lat": 34.05,  "lon": -118.25,"alt": 71},
+    {"name": "Shenzhen",    "lat": 22.54,  "lon": 114.05,  "alt": 20},
+    {"name": "Beijing",     "lat": 39.90,  "lon": 116.40,  "alt": 43},
+    {"name": "Tokyo",       "lat": 35.69,  "lon": 139.69,  "alt": 40},
+    {"name": "Los Angeles", "lat": 34.05,  "lon": -118.25, "alt": 71},
 ]
 
 # ── Parameters ─────────────────────────────────────────────────────────────
@@ -125,10 +126,13 @@ def local_time(utc_dt: datetime, offset_hours: float) -> str:
 STATION_UTC_OFFSET = {
     "Shenzhen":    8,
     "Beijing":     8,
-    "Los Angeles": -7,   # PDT (UTC-7) or PST (UTC-8) depending on season
+    "Tokyo":       9,
+    "Los Angeles": -7,   # PDT (UTC-7) in March
 }
 
 def main():
+    global MIN_ELEVATION, MIN_STABLE_SECS, SCAN_STEP_SEC
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--hours",      type=float, default=4.0)
     parser.add_argument("--min-elev",   type=float, default=MIN_ELEVATION)
@@ -137,7 +141,6 @@ def main():
     parser.add_argument("--step",       type=int,   default=SCAN_STEP_SEC)
     args = parser.parse_args()
 
-    global MIN_ELEVATION, MIN_STABLE_SECS, SCAN_STEP_SEC
     MIN_ELEVATION   = args.min_elev
     MIN_STABLE_SECS = args.min_stable * 60
     SCAN_STEP_SEC   = args.step

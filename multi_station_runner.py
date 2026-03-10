@@ -46,8 +46,17 @@ STATION_REGISTRY = {
         "lon":     116.40,
         "alt":     43,
         "log_dir": "logs/beijing",
-        "port":    8000,   # sequential — reuse port after restart
+        "port":    8000,
         "tz_label":"UTC+8",
+    },
+    "tokyo": {
+        "name":    "Tokyo",
+        "lat":     35.69,
+        "lon":     139.69,
+        "alt":     40,
+        "log_dir": "logs/tokyo",
+        "port":    8000,
+        "tz_label":"UTC+9",
     },
     "la": {
         "name":    "Los Angeles",

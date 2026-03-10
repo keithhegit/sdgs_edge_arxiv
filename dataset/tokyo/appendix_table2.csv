@@ -1,0 +1,5 @@
+Metric,Median (P50),95th Pct (P95),99th Pct (P99)
+Residual TA  open-loop  (µs),2.76,3.59,3.68
+Residual TA  closed-loop (µs),0.45,0.50,0.50
+Residual CFO open-loop  (Hz),766.10,850.90,857.96
+Residual CFO closed-loop (Hz),71.90,76.60,76.90

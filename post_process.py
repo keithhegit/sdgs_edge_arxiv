@@ -547,6 +547,7 @@ Ground Stations in 5G NTN Scenarios. OgCloud Limited / Penn State University.
 STATION_DIRS = {
     "Shenzhen":    "logs/shenzhen",
     "Beijing":     "logs/beijing",
+    "Tokyo":       "logs/tokyo",
     "Los Angeles": "logs/la",
 }
 
