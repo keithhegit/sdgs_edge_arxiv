@@ -6,10 +6,13 @@ docs/
 # dataset/ — now tracked (post-processed CSVs and summaries)
 starlink.tle
 
-# WireGuard private keys
+# WireGuard private keys and VPN configs
 *.key
-wg1_ubuntu.conf
+*.conf
 wg1_ubuntu_private.key
+
+# Local environment config (contains secrets)
+.env
 
 # Python cache
 __pycache__/

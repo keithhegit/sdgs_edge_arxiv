@@ -404,8 +404,9 @@ async def ping_measurement_loop():
     """方案A：每8秒 ping Pi1，优先 WireGuard IP，回退到真实 LAN IP"""
     global real_metrics
     # 优先顺序: WireGuard tunnel → 真实 LAN IP
-    PI1_WG_IP   = "10.100.0.2"
-    PI1_LAN_IP  = "172.31.18.37"
+    # Set via env vars; WireGuard IP takes priority, falls back to LAN IP
+    PI1_WG_IP   = os.environ.get("PI1_WG_IP",  "10.100.0.2")    # WireGuard tunnel IP of Pi1
+    PI1_LAN_IP  = os.environ.get("PI1_LAN_IP", "192.168.1.10")  # LAN IP of Pi1 (fallback)
 
     async def do_ping(ip: str, count: int = 10):
         proc = await asyncio.create_subprocess_exec(

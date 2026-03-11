@@ -18,32 +18,35 @@ NTN SAT-Node Worker  (部署在 Pi2 上)
   sudoers: og ALL=(ALL) NOPASSWD: /usr/sbin/tc, /usr/bin/wg, /usr/bin/ip
 """
 
+import os
 import redis
 import json
 import subprocess
 import time
 import sys
 
-REDIS_HOST = "10.100.0.1"   # Ubuntu WireGuard IP
+REDIS_HOST = os.environ.get("REDIS_HOST", "10.100.0.1")  # Ubuntu server WireGuard IP
 REDIS_PORT = 6379
 RECONNECT_SEC = 5
 
 PRIMARY_IFACE   = "wg0"
 SECONDARY_IFACE = "wg1"
 
-# ── 预备的 wg1 config（由 Ubuntu 生成，部署时填入）──
-WG1_CONFIG = """
+# ── wg1 config template — fill in your own keys before deploying ──
+# Generate keys: wg genkey | tee pi2_private.key | wg pubkey > pi2_public.key
+# See wg1_pi2.conf.example in this repo for the full template.
+WG1_CONFIG = os.environ.get("WG1_CONFIG", """
 [Interface]
 Address = 10.100.1.3/24
 ListenPort = 51821
-PrivateKey = +D74pv9aqKFPo2syiuj9Ff3UfDwInYL988ucrfTnRmI=
+PrivateKey = <PI2_PRIVATE_KEY>
 
 [Peer]
-PublicKey = mDYrEqsQSC1TledQ4WJsgrx/zR8UWTjyF10tA+WKzn8=
-Endpoint = 10.100.0.1:51821
+PublicKey = <UBUNTU_PUBLIC_KEY>
+Endpoint = <UBUNTU_WG_IP>:51821
 AllowedIPs = 10.100.1.0/24
 PersistentKeepalive = 25
-"""
+""")
 
 # ────────────────────────────────────────────────
 def run(cmd, check=False):

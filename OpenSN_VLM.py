@@ -3,10 +3,14 @@ import json
 import paramiko
 import threading
 
-PI1_HOST = '172.31.18.37'
-PI2_HOST = '172.31.18.38'
-PI_USER = 'og'
-PI_PASS = 'Ogcloud123'
+import os
+
+# Configure via environment variables or a local .env file (never commit credentials)
+# Example: export PI1_HOST=192.168.1.10 PI2_HOST=192.168.1.11 PI_USER=pi PI_PASS=yourpass
+PI1_HOST = os.environ.get("PI1_HOST", "192.168.1.10")   # replace with your Pi1 LAN IP
+PI2_HOST = os.environ.get("PI2_HOST", "192.168.1.11")   # replace with your Pi2 LAN IP
+PI_USER  = os.environ.get("PI_USER",  "pi")
+PI_PASS  = os.environ.get("PI_PASS",  "")                # set via env, never hardcode
 
 
 def ssh_tc(host, delay, jitter, loss):
