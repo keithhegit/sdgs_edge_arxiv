@@ -11,7 +11,7 @@
 
 # Edge Intelligence-Driven Uplink Optimization for Software-Defined Ground Stations in 5G NTN Scenarios
 
-[![License: MIT](https://img.shields.io/badge/Code-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/Code-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Dataset: CC BY 4.0](https://img.shields.io/badge/Dataset-CC%20BY%204.0-green.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![arXiv](https://img.shields.io/badge/arXiv-preprint-b31b1b.svg)](#citation)
@@ -161,7 +161,7 @@ python3 post_process.py --multi-station
 
 ## License
 
-Code: **MIT License** · Dataset (`logs/`, `dataset/`): **CC BY 4.0**
+Code: **Apache License 2.0** · Dataset (`logs/`, `dataset/`): **CC BY 4.0**
 
 Satellite TLE data: [CelesTrak](https://celestrak.org) (T.S. Kelso) · Propagation: [Skyfield](https://rhodesmill.org/skyfield/) (Brandon Rhodes)
 
@@ -171,7 +171,7 @@ Satellite TLE data: [CelesTrak](https://celestrak.org) (T.S. Kelso) · Propagati
 
 # 面向 5G NTN 软件定义地面站的边缘智能上行链路优化
 
-[![协议: MIT](https://img.shields.io/badge/代码-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![协议: Apache 2.0](https://img.shields.io/badge/代码-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![数据集: CC BY 4.0](https://img.shields.io/badge/数据集-CC%20BY%204.0-green.svg)](https://creativecommons.org/licenses/by/4.0/)
 
 <p align="right"><a href="#english">↑ Switch to English</a></p>
@@ -275,6 +275,6 @@ python3 post_process.py --multi-station
 
 ## 许可证
 
-代码：**MIT 协议** · 数据集（`logs/`、`dataset/`）：**CC BY 4.0**
+代码：**Apache License 2.0** · 数据集（`logs/`、`dataset/`）：**CC BY 4.0**
 
 卫星 TLE 数据由 [CelesTrak](https://celestrak.org)（T.S. Kelso）提供 · 轨道传播使用 [Skyfield](https://rhodesmill.org/skyfield/)（Brandon Rhodes）
