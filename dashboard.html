@@ -282,7 +282,7 @@ body{
 <div id="auth-overlay">
   <div id="auth-card">
     <div style="display:flex; justify-content:center; margin-bottom:15px;">
-      <img src="https://pub-c98d5902eedf42f6a9765dfad981fd88.r2.dev/Icon/2023.10.24--ogcloudlogo-CMYK-TM.png" alt="Ogcloud" style="height:32px;">
+      <img src="https://pub-c98d5902eedf42f6a9765dfad981fd88.r2.dev/Icon/oglink.png" alt="Oglink" style="height:32px;">
     </div>
     <div class="auth-title" style="font-family:'Inter',sans-serif;font-size:16px;">SDGS 边缘智能数字孪生控制台</div>
     <div class="auth-sub" style="margin-bottom:2px;">SDGS GROUND CONTROL</div>
@@ -300,7 +300,7 @@ body{
 <div id="connect-overlay">
   <div id="connect-card">
     <div style="display:flex; justify-content:center; margin-bottom:30px;">
-      <img src="https://pub-c98d5902eedf42f6a9765dfad981fd88.r2.dev/Icon/2023.10.24--ogcloudlogo-CMYK-TM.png" alt="Ogcloud" style="height:48px;">
+      <img src="https://pub-c98d5902eedf42f6a9765dfad981fd88.r2.dev/Icon/oglink.png" alt="Oglink" style="height:48px;">
     </div>
     <div class="flex flex-col items-center mb-6">
       <div style="font-family:'Inter',sans-serif;font-size:24px;font-weight:600;letter-spacing:1px;color:#00dd77;margin-bottom:6px;">
@@ -326,7 +326,7 @@ body{
 <!-- ══════════════════ HEADER ══════════════════ -->
 <header class="panel flex items-center justify-between px-5 py-2.5 shrink-0" style="opacity:0;transition:opacity 0.8s;" id="main-header">
   <div class="flex items-center gap-4">
-    <img src="https://pub-c98d5902eedf42f6a9765dfad981fd88.r2.dev/Icon/2023.10.24--ogcloudlogo-CMYK-TM.png" alt="Ogcloud" style="height:28px;">
+    <img src="https://pub-c98d5902eedf42f6a9765dfad981fd88.r2.dev/Icon/oglink.png" alt="Oglink" style="height:28px;">
     <div>
       <div style="display:flex; align-items:baseline; gap:10px;">
         <div style="font-family:'Inter',sans-serif;font-size:18px;font-weight:900;background:linear-gradient(90deg,#00d4ff,#00ff99);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;">
@@ -343,7 +343,7 @@ body{
   </div>
   <div class="flex gap-3 items-center">
     <button id="btn-ai" onclick="toggleAI()" class="btn-ai px-4 py-2 rounded text-sm transition-all font-semibold" style="width:196px;">Edge-AI PID: 开启</button>
-    <button onclick="toggleHandover()" class="btn-handover px-4 py-2 rounded text-sm transition-all font-semibold" style="width:156px;">⚡ 强制越区切换</button>
+    <button onclick="toggleHandover()" class="btn-handover px-4 py-2 rounded text-sm transition-all font-semibold" style="width:156px;display:none;">⚡ 强制越区切换</button>
   </div>
 </header>
 
@@ -446,7 +446,7 @@ body{
           <div id="pool-count-badge">正在计算… / COMPUTING</div>
           <div id="pool-separator"></div>
           <button id="btn-next-pool" onclick="requestNextSat()" disabled>
-            切换下一颗 · NEXT SAT
+            重定向目标 · REPOINT
           </button>
           <div id="pool-list">
             <div id="pool-refreshing">扫描完成后自动更新 / UPDATING...</div>
@@ -467,23 +467,23 @@ body{
     <!-- KPI row -->
     <div class="flex gap-2 shrink-0 items-stretch">
       <!-- 物理层多普勒补偿算法核心参数 -->
-      <div class="panel shrink-0" style="padding:4px 8px; border-top: 2px solid var(--cyan); background: linear-gradient(180deg, rgba(0, 180, 255, 0.06) 0%, rgba(0,0,0,0) 100%);">
-        <div style="text-align:center; margin-bottom:5px; padding-bottom:3px; border-bottom: 1px solid rgba(0, 180, 255, 0.15);">
-          <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:0.5px;">📡 边缘智能多普勒补偿</div>
-          <div style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;margin-top:1px;">EDGE-AI DOPPLER COMPENSATION</div>
+      <div class="panel" style="flex:0 0 auto; width:30%; min-width:220px; padding:6px 10px; border-top: 2px solid var(--cyan); background: linear-gradient(180deg, rgba(0, 180, 255, 0.06) 0%, rgba(0,0,0,0) 100%);">
+        <div style="text-align:center; margin-bottom:6px; padding-bottom:4px; border-bottom: 1px solid rgba(0, 180, 255, 0.15);">
+          <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:0.5px;">边缘智能多普勒补偿</div>
+          <div style="font-size:8px;color:var(--muted);letter-spacing:0.8px;font-family:'JetBrains Mono',monospace;margin-top:2px;">EDGE-AI DOPPLER COMPENSATION</div>
         </div>
-        <div class="flex gap-2">
-          <div class="kpi-card text-center" style="border-color: rgba(0, 200, 255, 0.15); background: rgba(2, 6, 14, 0.8);">
+        <div class="flex gap-2" style="width:100%;">
+          <div class="kpi-card text-center flex-1" style="border-color: rgba(0, 200, 255, 0.15); background: rgba(2, 6, 14, 0.8);">
             <div style="margin-bottom:3px; display:flex; flex-direction:column; align-items:center;">
-              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">⏱ 残余定时提前</span>
+              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">残余定时提前</span>
               <span style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;">RESIDUAL TA</span>
             </div>
             <div class="kpi-val text-xl" style="color:#ffcc44;"><span id="val-ta">--</span><span style="font-size:10px;font-weight:400;"> µs</span></div>
             <div style="font-size:7px;color:var(--muted);margin-top:2px;">LIMIT 2.34µs</div>
           </div>
-          <div class="kpi-card text-center" style="border-color: rgba(0, 200, 255, 0.15); background: rgba(2, 6, 14, 0.8);">
+          <div class="kpi-card text-center flex-1" style="border-color: rgba(0, 200, 255, 0.15); background: rgba(2, 6, 14, 0.8);">
             <div style="margin-bottom:3px; display:flex; flex-direction:column; align-items:center;">
-              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">🌊 残余频偏</span>
+              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">残余频偏</span>
               <span style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;">RESIDUAL CFO</span>
             </div>
             <div class="kpi-val text-xl" style="color:#44ddff;"><span id="val-cfo">--</span><span style="font-size:10px;font-weight:400;"> Hz</span></div>
@@ -493,15 +493,15 @@ body{
       </div>
 
       <!-- 网络参数 -->
-      <div class="panel flex-1" style="padding:4px 8px; border-top: 2px solid var(--emerald); background: linear-gradient(180deg, rgba(0, 200, 100, 0.04) 0%, rgba(0,0,0,0) 100%);">
-        <div style="text-align:center; margin-bottom:5px; padding-bottom:3px; border-bottom: 1px solid rgba(0, 200, 100, 0.15);">
-          <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:var(--emerald);letter-spacing:0.5px;">🌐 端到端网络传输性能</div>
-          <div style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;margin-top:1px;">END-TO-END NETWORK PERFORMANCE</div>
+      <div class="panel flex-1" style="padding:6px 10px; border-top: 2px solid var(--emerald); background: linear-gradient(180deg, rgba(0, 200, 100, 0.04) 0%, rgba(0,0,0,0) 100%);">
+        <div style="text-align:center; margin-bottom:6px; padding-bottom:4px; border-bottom: 1px solid rgba(0, 200, 100, 0.15);">
+          <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--emerald);letter-spacing:0.5px;">端到端网络传输性能</div>
+          <div style="font-size:8px;color:var(--muted);letter-spacing:0.8px;font-family:'JetBrains Mono',monospace;margin-top:2px;">END-TO-END NETWORK PERFORMANCE</div>
         </div>
         <div class="grid grid-cols-4 gap-2">
           <div class="kpi-card text-center" style="border-color: rgba(0, 200, 100, 0.15); background: rgba(2, 6, 14, 0.8);">
             <div style="margin-bottom:3px; display:flex; flex-direction:column; align-items:center;">
-              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">🚀 吞吐量</span>
+              <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text);margin-bottom:1px;">吞吐量</span>
               <span style="font-size:7px;color:var(--muted);letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;">THROUGHPUT</span>
             </div>
             <div class="kpi-val text-xl" style="color:var(--emerald);"><span id="val-tput">--</span><span style="font-size:10px;font-weight:400;"> Mbps</span></div>
@@ -560,7 +560,7 @@ body{
       <div class="panel p-3 flex flex-col">
         <div class="flex justify-between items-center shrink-0 mb-1">
           <div style="display:flex; align-items:baseline; gap:6px;">
-            <span style="font-size:12px;color:var(--emerald);font-weight:600;font-family:'Inter',sans-serif;">🚀 实时吞吐量</span>
+            <span style="font-size:12px;color:var(--emerald);font-weight:600;font-family:'Inter',sans-serif;">实时吞吐量</span>
             <span style="font-size:9px;color:rgba(0,229,160,0.6);font-weight:400;font-family:'JetBrains Mono',monospace;">Throughput (TCP BBR)</span>
           </div>
         </div>
@@ -1190,6 +1190,15 @@ function processTelemetry(d) {
       btnAI.textContent='Edge-AI PID: 关闭 (Baseline)';
     }
 
+    // Sync force_handover button state from backend telemetry
+    const btnHO = document.querySelector('.btn-handover');
+    if (btnHO && d.state.force_handover !== undefined) {
+      const active = !!d.state.force_handover;
+      btnHO.dataset.active = active ? '1' : '0';
+      btnHO.textContent    = active ? '✋ 取消强制切换' : '⚡ 强制越区切换';
+      btnHO.style.opacity  = active ? '0.6' : '1';
+    }
+
     if (d.satellite && !isAcquiring) {
       document.getElementById('locked-name').textContent   = d.satellite.name;
       document.getElementById('locked-epoch').textContent  = d.satellite.epoch !== 'N/A' ? d.satellite.epoch : '—';
@@ -1292,7 +1301,7 @@ function switchToSat(topIdx, name) {
   if (!ws || !scanComplete) return;
   ws.send(JSON.stringify({switch_to_sat: topIdx}));
   globeSatName = name;
-  log(`<span class="t-cyan">▶ 切换目标: ${name}</span>`);
+  log(`<span class="t-cyan">▶ REPOINT → 重定向目标: ${name}</span>`);
 }
 
 // ════════════════ NEXT SAT (instant, pool-based) ════════════════
@@ -1368,7 +1377,18 @@ function triggerAutoAcquisition(newSatName) {
 
 // ════════════════ CONTROLS ════════════════
 function toggleAI()       { if(ws) ws.send(JSON.stringify({toggle_ai:true})); }
-function toggleHandover() { if(ws) ws.send(JSON.stringify({force_handover:true})); }
+function toggleHandover() {
+  if (!ws) return;
+  const btn = document.querySelector('.btn-handover');
+  const isActive = btn && btn.dataset.active === '1';
+  const newVal = !isActive;
+  ws.send(JSON.stringify({force_handover: newVal}));
+  if (btn) {
+    btn.dataset.active = newVal ? '1' : '0';
+    btn.textContent   = newVal ? '✋ 取消强制切换' : '⚡ 强制越区切换';
+    btn.style.opacity = newVal ? '0.6' : '1';
+  }
+}
 
 // ════════════════ MEASUREMENT MODE TOGGLE ════════════════
 let realModeActive = false;

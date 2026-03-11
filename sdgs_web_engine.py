@@ -446,7 +446,7 @@ async def ping_measurement_loop():
                 "delay":       one_way,
                 "loss":        round(loss, 1),
                 "jitter":      round(jitter, 2) if jitter else None,
-                "last_update": time.strftime("%H:%M:%S"),
+                "last_update": (datetime.utcnow() + __import__('datetime').timedelta(hours=8)).strftime("%H:%M:%S"),
                 "reachable":   (loss < 100),
                 "via":         via,
             })
@@ -455,7 +455,7 @@ async def ping_measurement_loop():
         except asyncio.TimeoutError:
             real_metrics.update({
                 "delay": None, "loss": 100.0, "reachable": False,
-                "via": "timeout", "last_update": time.strftime("%H:%M:%S")
+                "via": "timeout", "last_update": (datetime.utcnow() + __import__('datetime').timedelta(hours=8)).strftime("%H:%M:%S")
             })
             print("[Ping] Pi1 全部超时，标记为不可达")
         except Exception as e:
@@ -831,7 +831,7 @@ async def orbit_simulation_loop():
             scan_state["progress"] = min(scan_state["progress"] + 115, scan_state["total"])
 
         telemetry = {
-            "time": time.strftime("%H:%M:%S"),
+            "time": (datetime.utcnow() + __import__('datetime').timedelta(hours=8)).strftime("%H:%M:%S"),
             "orbit": {"alt": round(alt_deg, 2), "dist": round(dist_km, 1), "lat": round(sat_lat, 3), "lon": round(sat_lon, 3)},
             "phy": {"ta": round(residual_ta, 2), "cfo": round(residual_cfo, 0)},
             "net": {
@@ -881,7 +881,7 @@ async def orbit_simulation_loop():
         )
 
         await manager.broadcast(json.dumps(telemetry))
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(1.0)
 
 
 @app.on_event("startup")
@@ -901,7 +901,19 @@ async def websocket_endpoint(websocket: WebSocket):
             if "toggle_ai" in cmd:
                 sim_state["edge_ai_enabled"] = not sim_state["edge_ai_enabled"]
             if "force_handover" in cmd:
-                sim_state["force_handover"] = not sim_state["force_handover"]
+                # Accept explicit bool value, or toggle if sent as True sentinel
+                val = cmd["force_handover"]
+                if isinstance(val, bool):
+                    sim_state["force_handover"] = val
+                else:
+                    sim_state["force_handover"] = not sim_state["force_handover"]
+                # Auto-reset handover state machine when force is cleared
+                if not sim_state["force_handover"]:
+                    handover_state.update({
+                        "phase": "NORMAL", "standby_name": None,
+                        "standby_alt": None, "standby_idx": None,
+                        "pre_warm_published": False, "secondary_tick": 0,
+                    })
             if "toggle_measurement_mode" in cmd:
                 global measurement_mode
                 measurement_mode = "real" if measurement_mode == "simulated" else "simulated"
