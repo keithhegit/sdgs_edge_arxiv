@@ -1,6 +1,6 @@
 # HIL Multi-Station Dataset Summary
-**Generated**: 2026-03-10 (post-processing complete, clean rerun)
-**Version**: v4.0 — 4-Station Geographic Validation (all stations fully consistent)
+**Generated**: 2026-03-12 (post-processing re-validated)
+**Version**: v5.0 — 4-Station Geographic Validation (CSV-authoritative, A1–A3 vs B1–B3)
 
 ---
 
@@ -16,30 +16,36 @@
 
 > **Data consistency note**: For each station, all 7 runs (A1–A3, B1–B3, D1) were collected
 > within the same continuous orbital window (~22 minutes), ensuring A-group (Edge-AI ON)
-> and B-group (Baseline) operate under identical satellite geometry. This is required for
-> a valid A-vs-B throughput comparison.
+> and B-group (Baseline) operate under identical satellite geometry.
+
+> **Statistical methodology**: Throughput and RTT comparisons use A1–A3 vs B1–B3 (n=3 per group).
+> D1 is excluded from performance comparison because real ICMP probes introduce an additional
+> network variable absent from B runs. Values are mean ± std of per-run means.
 
 ---
 
-## Table A-1: Cross-Station Throughput & Latency (NORMAL-phase rows only)
+## Table A-1: Cross-Station Throughput & Latency (NORMAL-phase, A1–A3 vs B1–B3)
 
 | Station | Lat | Tput Edge-AI (Mbps) | Tput Baseline (Mbps) | Δ | RTT Edge-AI (ms) | RTT Baseline (ms) |
 |---|---|---|---|---|---|---|
-| Shenzhen | 22.5°N | 194.91 | 80.14 | **+143.2%** | 31.86 | 70.51 |
-| Beijing | 39.9°N | 197.68 | 79.96 | **+147.2%** | 32.05 | 71.20 |
-| Tokyo | 35.7°N | 195.97 | 79.87 | **+145.4%** | 31.82 | 70.38 |
-| Los Angeles | 34.1°N | 198.39 | 80.02 | **+147.9%** | 32.43 | 71.21 |
+| Shenzhen | 22.5°N | 196.04 ± 1.87 | 80.14 ± 0.14 | **+144.6%** | 32.84 ± 2.56 | 70.51 ± 2.34 |
+| Beijing | 39.9°N | 198.86 ± 3.49 | 79.96 ± 0.25 | **+148.7%** | 31.76 ± 2.47 | 71.20 ± 2.05 |
+| Tokyo | 35.7°N | 196.58 ± 4.88 | 79.87 ± 0.07 | **+146.1%** | 31.94 ± 0.62 | 70.38 ± 1.30 |
+| Los Angeles | 34.1°N | 198.53 ± 5.99 | 80.02 ± 0.11 | **+148.1%** | 32.95 ± 1.16 | 71.21 ± 0.89 |
 
 ---
 
-## Table A-2: Cross-Station Residual TA/CFO
+## Table A-2: Cross-Station Residual TA/CFO (A1–A3 closed-loop, B1–B3 open-loop)
 
 | Station | n (closed-loop) | TA P95 CL (µs) | CFO P95 CL (Hz) | n (open-loop) | TA P95 OL (µs) | CFO P95 OL (Hz) |
 |---|---|---|---|---|---|---|
-| Shenzhen | 6,597 | **0.49** | **76** | 4,944 | 3.65 | 855 |
-| Beijing | 6,572 | **0.49** | **76** | 4,930 | 3.65 | 855 |
-| Tokyo | 6,547 | **0.49** | **76** | 4,912 | 3.65 | 855 |
-| Los Angeles | 6,541 | **0.49** | **76** | 4,906 | 3.65 | 855 |
+| Shenzhen | 2,742 | **0.49** | **76** | 2,625 | 3.65 | 854 |
+| Beijing | 3,134 | **0.49** | **77** | 2,725 | 3.65 | 854 |
+| Tokyo | 2,751 | **0.49** | **76** | 2,565 | 3.65 | 856 |
+| Los Angeles | 3,179 | **0.49** | **76** | 2,957 | 3.65 | 855 |
+
+> CFO P95 (closed-loop) raw decimal values: Shenzhen 76.30, Beijing 76.60, Tokyo 76.50, LA 76.50 Hz.
+> Integer rounding produces 76–77 Hz. TA P95 (closed-loop) = 0.49 µs at all stations (identical).
 
 ---
 
@@ -62,17 +68,17 @@
 ## Key Findings
 
 ### Finding 1: Algorithm Geographic Generalizability (confirmed at all 4 stations)
-**TA P95 (closed-loop) = 0.49 µs at ALL 4 stations.**  
-**CFO P95 (closed-loop) = 76 Hz at ALL 4 stations.**
+**TA P95 (closed-loop) = 0.49 µs at ALL 4 stations.**
+**CFO P95 (closed-loop) = 76–77 Hz at ALL 4 stations (76.3–76.6 Hz raw).**
 
 The Edge-AI PID compensation, tuned on Shenzhen data, achieves identical residual
 error bounds across 17° of latitude (22.5°N–39.9°N) without retuning. This is the
 strongest evidence of geographic generalizability in the dataset.
 
 ### Finding 2: Consistent Throughput Improvement Across Locations
-All four stations show +143–148% throughput improvement with Edge-AI ON vs Baseline:
+All four stations show +145–149% throughput improvement with Edge-AI ON vs Baseline:
 - Baseline consistently at ~80 Mbps (open-loop TA > CP threshold → full HARQ penalty)
-- Edge-AI consistently at ~195–198 Mbps (closed-loop TA < 0.50 µs → no ISI penalty)
+- Edge-AI consistently at ~196–199 Mbps (closed-loop TA < 0.50 µs → no ISI penalty)
 - Variance across stations: < 2% — confirms the compensation mechanism, not orbital geometry, dominates throughput
 
 ### Finding 3: Latitude-Correlated Orbital Coverage
@@ -111,5 +117,5 @@ sdgs_lab/
 - **results.tex**: Two subsections added:
   1. "Geographic Generalizability of Edge-AI Compensation (HIL Validation)"
   2. "Latitude-Correlated Orbital Coverage and Its Implications"
-- **appendix_hil.tex**: Table A-4 populated with real data from all 4 stations.
-- **GitHub**: `https://github.com/keithhegit/sdgs_edge`
+- **appendix_hil.tex**: Table A-1 and cross-station table populated with data from all 4 stations.
+- **GitHub**: `https://github.com/keithhegit/sdgs_edge_arxiv`

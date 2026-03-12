@@ -560,7 +560,7 @@ def write_cross_station_table(station_results: dict, out_dir: pathlib.Path):
              "Tput Δ", "RTT Edge-AI (ms)", "RTT Baseline (ms)",
              "TA P95 closed (µs)", "CFO P95 closed (Hz)"]]
 
-    STATION_LAT = {"Shenzhen": "22.5°N", "Beijing": "39.9°N", "Los Angeles": "34.1°N"}
+    STATION_LAT = {"Shenzhen": "22.5°N", "Beijing": "39.9°N", "Tokyo": "35.7°N", "Los Angeles": "34.1°N"}
 
     for name, result in sorted(station_results.items()):
         g = result["groups"]

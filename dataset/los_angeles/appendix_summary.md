@@ -96,5 +96,5 @@ Key `telemetry.csv` columns:
 
 ---
 
-*Dataset collected: 2026-03-10 ·
+*Dataset collected: 2026-03-12 ·
 SDGS HIL Testbed v4.1 · Ground Station: Shenzhen (22.54°N, 114.05°E)*
