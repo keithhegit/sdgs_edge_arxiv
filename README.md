@@ -9,22 +9,23 @@
 
 <a name="english"></a>
 
-# Edge Intelligence-Driven Uplink Optimization for Software-Defined Ground Stations in 5G NTN Scenarios
+# Edge-Side Residual Timing and Frequency Control for Software-Defined Ground Stations in 5G NTN Uplinks
 
+[![arXiv](https://img.shields.io/badge/arXiv-preprint-b31b1b.svg)](#citation)
 [![License: Apache 2.0](https://img.shields.io/badge/Code-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Dataset: CC BY 4.0](https://img.shields.io/badge/Dataset-CC%20BY%204.0-green.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![arXiv](https://img.shields.io/badge/arXiv-preprint-b31b1b.svg)](#citation)
 
-**Author:** Longji He¹²  
-**Affiliations:** ¹OgCloud Limited · ²The Pennsylvania State University  
+
+**Author:** Longji He¹²  Elena Emma Wang³, Xichun Wang⁴, Juntao Xu¹, and Jiaming Li*⁴
+**Affiliations:** ¹OgCloud Limited · ²The Pennsylvania State University · ³The Meadows School · ⁴Northern Arizona University
 **Contact:** keith@ogcloud.com · lph5530@psu.edu
 
 ## Abstract
 
 This repository contains the full source code, Hardware-in-the-Loop (HIL) testbed implementation, and experimental dataset accompanying the paper:
 
-> **Edge Intelligence-Driven Uplink Optimization for Software-Defined Ground Stations in 5G NTN Scenarios**  
+> **Edge-Side Residual Timing and Frequency Control for Software-Defined Ground Stations in 5G NTN Uplinks**  
 > Longji He. *arXiv preprint*, 2026.
 
 We propose an edge intelligence-driven framework for Software-Defined Ground Stations (SDGS) operating in 5G Non-Terrestrial Network (NTN) environments. An Edge-AI PID closed-loop controller reduces residual Timing Advance (TA) and Carrier Frequency Offset (CFO) to within 3GPP NR compliance thresholds in real hardware.
@@ -269,7 +270,7 @@ python3 post_process.py --multi-station
   author  = {He, Longji},
   journal = {arXiv preprint},
   year    = {2026},
-  url     = {https://github.com/keithhegit/sdgs_edge_arxiv}
+  url     = {https://arxiv.org/abs/2604.13984}
 }
 ```
 
