@@ -1,5 +1,3 @@
-# SDGS Edge Intelligence — ArXiv Release
-
 <p align="center">
   <a href="#english">🇬🇧 English</a> &nbsp;|&nbsp;
   <a href="#chinese">🇨🇳 中文</a>
