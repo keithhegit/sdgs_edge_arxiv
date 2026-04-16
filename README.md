@@ -168,16 +168,18 @@ Satellite TLE data: [CelesTrak](https://celestrak.org) (T.S. Kelso) · Propagati
 
 <a name="chinese"></a>
 
-# 面向 5G NTN 软件定义地面站的边缘智能上行链路优化
+# 5G NTN 软件定义地面站的边缘侧残差时频稳控
 
-[![协议: Apache 2.0](https://img.shields.io/badge/代码-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![数据集: CC BY 4.0](https://img.shields.io/badge/数据集-CC%20BY%204.0-green.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![arXiv](https://img.shields.io/badge/arXiv-preprint-b31b1b.svg)](#citation)
+[![协议: Apache 2.0](https://img.shields.io/badge/Code-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![数据集: CC BY 4.0](https://img.shields.io/badge/Dataset-CC%20BY%204.0-green.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 
 <p align="right"><a href="#english">↑ Switch to English</a></p>
 
 ## 摘要
 
-本仓库包含论文《面向 5G NTN 软件定义地面站的边缘智能上行链路优化》的完整源代码、硬件在环（HIL）测试平台实现及实验数据集。
+本仓库包含论文《面向 5G NTN 软件定义地面站的边缘侧残差时频稳控》的完整源代码、硬件在环（HIL）测试平台实现及实验数据集。
 
 本文提出一种面向 5G 非地面网络（NTN）场景的软件定义地面站（SDGS）边缘智能上行优化框架，利用终端侧几何推导实现预测性多普勒补偿，并结合 **Edge-AI PID 闭环控制器** 自适应抑制残余定时提前（TA）和载波频偏（CFO），使其满足 3GPP NR 物理层门限要求。
 
