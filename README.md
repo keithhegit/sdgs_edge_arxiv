@@ -155,7 +155,7 @@ python3 post_process.py --multi-station
   author  = {He, Longji},
   journal = {arXiv preprint},
   year    = {2026},
-  url     = {https://github.com/keithhegit/sdgs_edge_arxiv}
+  url     = {arxiv.org/abs/2604.13984}
 }
 ```
 
