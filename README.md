@@ -151,8 +151,7 @@ python3 post_process.py --multi-station
 
 ```bibtex
 @article{he2026sdgs,
-  title   = {Edge Intelligence-Driven Uplink Optimization for Software-Defined
-             Ground Stations in {5G} {NTN} Scenarios},
+  title   = {Edge-Side Residual Timing and Frequency Control for Software-Defined Ground Stations in 5G NTN Uplinks},
   author  = {He, Longji},
   journal = {arXiv preprint},
   year    = {2026},
@@ -265,8 +264,7 @@ python3 post_process.py --multi-station
 
 ```bibtex
 @article{he2026sdgs,
-  title   = {Edge Intelligence-Driven Uplink Optimization for Software-Defined
-             Ground Stations in {5G} {NTN} Scenarios},
+  title   = {Edge-Side Residual Timing and Frequency Control for Software-Defined Ground Stations in 5G NTN Uplinks},
   author  = {He, Longji},
   journal = {arXiv preprint},
   year    = {2026},
